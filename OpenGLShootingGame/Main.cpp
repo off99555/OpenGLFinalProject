@@ -53,10 +53,11 @@ void drawRect(int glPrimitve, float w, float h) {
 	glEnd();
 }
 
-void drawPlayer(float rad) {
-	drawCircle(GL_LINE_LOOP, { rad, rad });
+void drawPlayer(float rad, Point gunSize) {
+	drawCircle(GL_POLYGON, { rad, rad });
+	playerAngle = time() * 20;
 	glRotatef(playerAngle, 0, 0, 1);
-	drawRect(GL_LINE_LOOP, 20, 50);
+	drawRect(GL_LINE_LOOP, gunSize.x, gunSize.y);
 }
 
 void display() {
@@ -74,7 +75,7 @@ void display() {
 		glVertex2f(points[i].x, points[i].y);
 	}
 	glEnd();
-	drawPlayer(25);
+	drawPlayer(25, { 10, 60 });
 	glutSwapBuffers();
 }
 

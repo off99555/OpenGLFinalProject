@@ -20,6 +20,7 @@ int W = 800;
 int H = 600;
 vector<Point> points;
 
+Point playerPosition;
 float playerAngle = 0;
 
 double time() {
@@ -54,10 +55,11 @@ void drawRect(int glPrimitve, float w, float h) {
 }
 
 void drawPlayer(float rad, Point gunSize) {
+	glPushMatrix();
 	drawCircle(GL_POLYGON, { rad, rad });
-	playerAngle = time() * 20;
-	glRotatef(playerAngle, 0, 0, 1);
+	glRotatef(playerAngle - 90, 0, 0, 1);
 	drawRect(GL_LINE_LOOP, gunSize.x, gunSize.y);
+	glPopMatrix();
 }
 
 void display() {
@@ -112,7 +114,8 @@ void reshape(int w, int h) {
 }
 
 void passiveMotion(int x, int y) {
-
+	Point p = screenToWorld(x, y);
+	playerAngle = atan2f(p.y, p.x) * 180 / PI; // make player gun points towards the mouse cursor
 }
 
 void initialize() {

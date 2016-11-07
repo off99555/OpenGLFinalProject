@@ -20,6 +20,8 @@ int W = 800;
 int H = 600;
 vector<Point> points;
 
+float playerAngle = 0;
+
 double time() {
 	return TIME.count(); // returns time since game loaded in seconds
 }
@@ -28,6 +30,7 @@ void setDefaultColor() {
 	glColor3f(0, 0, 0);
 }
 
+// can also draw ellipse too
 void drawCircle(int glPrimitive, Point radius) {
 	int rounds = radius.x + radius.y; // how precise the circle is, this number is made up
 	float factor = 2 * PI / rounds;
@@ -38,6 +41,22 @@ void drawCircle(int glPrimitive, Point radius) {
 		glVertex2f(radius.x*cosf(theta), radius.y*sinf(theta));
 	}
 	glEnd();
+}
+
+void drawRect(int glPrimitve, float w, float h) {
+	// pivot is at the base
+	glBegin(glPrimitve);
+	glVertex2f(-w / 2.0f, 0);
+	glVertex2f(w / 2.0f, 0);
+	glVertex2f(w / 2.0f, h);
+	glVertex2f(-w / 2.0f, h);
+	glEnd();
+}
+
+void drawPlayer(float rad) {
+	drawCircle(GL_LINE_LOOP, { rad, rad });
+	glRotatef(playerAngle, 0, 0, 1);
+	drawRect(GL_LINE_LOOP, 20, 50);
 }
 
 void display() {
@@ -55,8 +74,7 @@ void display() {
 		glVertex2f(points[i].x, points[i].y);
 	}
 	glEnd();
-	glPointSize(1);
-	drawCircle(GL_LINE_LOOP, { 100, 80 });
+	drawPlayer(25);
 	glutSwapBuffers();
 }
 

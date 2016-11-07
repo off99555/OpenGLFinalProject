@@ -34,7 +34,6 @@ void display() {
 
 	setDefaultColor();
 	glPointSize(10);
-	glTranslatef(100*sin(3*time()), 0, 0);
 	glBegin(GL_POINTS);
 	for (size_t i = 0; i < points.size(); i++)
 	{
@@ -55,9 +54,16 @@ void click(int btn, int st, int x, int y) {
 }
 
 void update() {
+	static int framesDrawn = 0;
+	static int lastTime = 0;
 	CURRENT_TIME = system_clock::now();
 	TIME = CURRENT_TIME - START_TIME;
+	if ((int)time() > lastTime) {
+		lastTime = (int)time();
+		cout << "Average FPS: " << (float) framesDrawn / lastTime << endl;
+	}
 	glutPostRedisplay();
+	framesDrawn++;
 }
 
 void reshape(int w, int h) {

@@ -13,9 +13,13 @@ struct Point {
 time_point<system_clock> START_TIME;
 time_point<system_clock> CURRENT_TIME;
 duration<double> TIME; // time duration since the program is loaded
-int W = 500;
-int H = 500;
+int W = 800;
+int H = 600;
 vector<Point> points;
+
+double time() {
+	return TIME.count(); // returns time since game loaded in seconds
+}
 
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -26,6 +30,7 @@ void display() {
 
 	glColor3f(0, 0, 0);
 	glPointSize(10);
+	glTranslatef(100*sin(3*time()), 0, 0);
 	glBegin(GL_POINTS);
 	for (size_t i = 0; i < points.size(); i++)
 	{
@@ -46,13 +51,8 @@ void click(int btn, int st, int x, int y) {
 }
 
 void update() {
-	static int cnt = 0;
 	CURRENT_TIME = system_clock::now();
 	TIME = CURRENT_TIME - START_TIME;
-	
-	if (++cnt % 1000 == 0) {
-		cout << TIME.count() << endl;
-	}
 	glutPostRedisplay();
 }
 
@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(W, H);
-	glutInitWindowPosition(700, 100);
+	glutInitWindowPosition(500, 100);
 	glutCreateWindow("Shooting Game by Off");
 	initialize();
 	glutMainLoop();

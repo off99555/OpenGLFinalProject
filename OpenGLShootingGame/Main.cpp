@@ -79,12 +79,17 @@ void display() {
 	glutSwapBuffers();
 }
 
+Point screenToWorld(int x, int y) {
+	float sx = x - W / 2.0f;
+	float sy = (H - y) - H / 2.0f;
+	return{ sx, sy };
+}
+
 void click(int btn, int st, int x, int y) {
 	if (st == GLUT_DOWN) {
-		float sx = x - W / 2;
-		float sy = (H - y) - H / 2;
-		cout << "Clicked at: " << sx << " " << sy << endl;
-		points.push_back({ sx, sy });
+		Point p = screenToWorld(x, y);
+		cout << "Clicked at: " << p.x << " " << p.y << endl;
+		points.push_back({ p.x, p.y });
 	}
 }
 
@@ -106,11 +111,16 @@ void reshape(int w, int h) {
 	glutReshapeWindow(W, H);
 }
 
+void passiveMotion(int x, int y) {
+
+}
+
 void initialize() {
 	glutDisplayFunc(display);
 	glutIdleFunc(update);
 	glutMouseFunc(click);
 	glutReshapeFunc(reshape);
+	glutPassiveMotionFunc(passiveMotion);
 	points.push_back({ 0, 0 });
 	START_TIME = system_clock::now();
 }

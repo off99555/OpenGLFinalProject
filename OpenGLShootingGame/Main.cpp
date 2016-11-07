@@ -48,7 +48,7 @@ void click(int btn, int st, int x, int y) {
 	if (st == GLUT_DOWN) {
 		float sx = x - W / 2;
 		float sy = (H - y) - H / 2;
-		cout << sx << " " << sy << endl;
+		cout << "Clicked at: " << sx << " " << sy << endl;
 		points.push_back({ sx, sy });
 	}
 }

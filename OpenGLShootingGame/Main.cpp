@@ -21,6 +21,10 @@ double time() {
 	return TIME.count(); // returns time since game loaded in seconds
 }
 
+void setDefaultColor() {
+	glColor3f(0, 0, 0);
+}
+
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -28,7 +32,7 @@ void display() {
 	glLoadIdentity();
 	gluOrtho2D(-W/2, W/2, -H/2, H/2);
 
-	glColor3f(0, 0, 0);
+	setDefaultColor();
 	glPointSize(10);
 	glTranslatef(100*sin(3*time()), 0, 0);
 	glBegin(GL_POINTS);

@@ -2,6 +2,9 @@
 #include <vector>
 #include <chrono>
 #include <gl/glut.h>
+
+#define PI 3.14159
+
 using namespace std;
 using namespace chrono;
 
@@ -25,6 +28,18 @@ void setDefaultColor() {
 	glColor3f(0, 0, 0);
 }
 
+void drawCircle(int glPrimitive, Point radius) {
+	int rounds = radius.x + radius.y; // how precise the circle is, this number is made up
+	float factor = 2 * PI / rounds;
+	
+	glBegin(glPrimitive);
+	for (int i = 0; i < rounds; i++) {
+		float theta = i * factor;
+		glVertex2f(radius.x*cosf(theta), radius.y*sinf(theta));
+	}
+	glEnd();
+}
+
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -40,7 +55,8 @@ void display() {
 		glVertex2f(points[i].x, points[i].y);
 	}
 	glEnd();
-
+	glPointSize(1);
+	drawCircle(GL_LINE_LOOP, { 100, 80 });
 	glutSwapBuffers();
 }
 

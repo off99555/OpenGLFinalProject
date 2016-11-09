@@ -8,7 +8,7 @@
 using namespace std;
 using namespace chrono;
 
-struct Point {
+struct Vector2f {
 	float x;
 	float y;
 };
@@ -22,9 +22,9 @@ int W = 800;
 int H = 600;
 float PLAYER_SPEED = 500.0f;
 
-vector<Point> points;
-Point playerPosition;
-Point playerSpeed;
+vector<Vector2f> points;
+Vector2f playerPosition;
+Vector2f playerSpeed;
 float playerAngle = 0;
 
 double time() {
@@ -40,7 +40,7 @@ void setDefaultColor() {
 }
 
 // can also draw ellipse too
-void drawCircle(int glPrimitive, Point radius) {
+void drawCircle(int glPrimitive, Vector2f radius) {
 	int rounds = radius.x + radius.y; // how precise the circle is, this number is made up
 	float factor = 2 * PI / rounds;
 	
@@ -62,7 +62,7 @@ void drawRect(int glPrimitve, float w, float h) {
 	glEnd();
 }
 
-void drawPlayer(float rad, Point gunSize) {
+void drawPlayer(float rad, Vector2f gunSize) {
 	glPushMatrix();
 	glTranslatef(playerPosition.x, playerPosition.y, 0);
 	drawCircle(GL_POLYGON, { rad, rad });
@@ -90,7 +90,7 @@ void display() {
 	glutSwapBuffers();
 }
 
-Point screenToWorld(int x, int y) {
+Vector2f screenToWorld(int x, int y) {
 	float sx = x - W / 2.0f;
 	float sy = (H - y) - H / 2.0f;
 	return{ sx, sy };
@@ -98,7 +98,7 @@ Point screenToWorld(int x, int y) {
 
 void click(int btn, int st, int x, int y) {
 	if (st == GLUT_DOWN) {
-		Point p = screenToWorld(x, y);
+		Vector2f p = screenToWorld(x, y);
 		cout << "Clicked at: " << p.x << " " << p.y << endl;
 		points.push_back({ p.x, p.y });
 	}
@@ -131,7 +131,7 @@ void reshape(int w, int h) {
 }
 
 void pointTowards(int x, int y) {
-	Point p = screenToWorld(x, y);
+	Vector2f p = screenToWorld(x, y);
 	// make player gun points towards the mouse cursor
 	playerAngle = atan2f(p.y - playerPosition.y, p.x - playerPosition.x) * 180 / PI;
 }

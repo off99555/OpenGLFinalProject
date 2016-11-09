@@ -31,7 +31,7 @@ double time() {
 	return TIME.count(); // returns time since game loaded in seconds
 }
 
-double timeDelta() {
+double timeDelta() { // time between last frame and current frame
 	return TIME_DELTA.count();
 }
 

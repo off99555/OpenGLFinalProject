@@ -104,6 +104,11 @@ void click(int btn, int st, int x, int y) {
 	}
 }
 
+void beforeRedisplay() {
+	playerPosition.x += playerSpeed.x * timeDelta();
+	playerPosition.y += playerSpeed.y * timeDelta();
+}
+
 void update() {
 	static int framesDrawn = 0;
 	static int lastTime = 0;
@@ -115,8 +120,7 @@ void update() {
 		lastTime = (int)time();
 		cout << "Average FPS: " << (float) framesDrawn / lastTime << endl;
 	}
-	playerPosition.x += playerSpeed.x * timeDelta();
-	playerPosition.y += playerSpeed.y * timeDelta();
+	beforeRedisplay();
 	glutPostRedisplay();
 	framesDrawn++;
 }

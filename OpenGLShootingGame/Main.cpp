@@ -30,10 +30,10 @@ struct Point : public IDrawable {
 
 struct Tree : public IDrawable {
 	Vector2f pos;
-	int depth = 3;
+	int depth = 8;
 	float length = 100;
 	float startAngle;
-	float splitAngle = 30;
+	float splitAngle = 50;
 	float splitSizeFactor = 2.0 / 3.0;
 	void draw() {
 		glPushMatrix();
@@ -157,7 +157,6 @@ void click(int btn, int st, int x, int y) {
 		Tree *tree = new Tree;
 		tree->pos = { p.x, p.y };
 		tree->startAngle = playerAngle - 90;
-		tree->splitAngle = 30;
 		drawables.push_back(tree);
 	}
 }

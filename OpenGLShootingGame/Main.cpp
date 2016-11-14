@@ -170,7 +170,7 @@ vector<Vector2f> points;
 Vector2f playerPosition = { -326, -263 };
 Vector2f playerSpeed;
 float playerAngle = 0;
-Tree *mainTree;
+TreeBehavior *mainTree;
 SineWaveBehavior *mainWave;
 
 double time() {
@@ -260,7 +260,6 @@ void click(int btn, int st, int x, int y) {
 		//tree->depth = 6;
 		//tree->splitAngle = 30;
 		//drawables.push_back(tree);
-		mainWave->shiftRate *= -1;
 	}
 }
 
@@ -340,6 +339,12 @@ void keyboardUp(unsigned char c, int x, int y) {
 	pointTowards(x, y);
 }
 
+void mainMenu(int val) {
+	if (val == 0) {
+		mainWave->shiftRate *= -1;
+	}
+}
+
 void initialize() {
 	glutDisplayFunc(display);
 	glutIdleFunc(update);
@@ -348,6 +353,10 @@ void initialize() {
 	glutPassiveMotionFunc(passiveMotion);
 	glutKeyboardFunc(keyboard);
 	glutKeyboardUpFunc(keyboardUp);
+
+	glutCreateMenu(mainMenu);
+	glutAddMenuEntry("Switch wave direction", 0);
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
 	//Point *middle = new Point;
 	//middle->pos = { 0, 0 };
 	//drawables.push_back(middle);
@@ -359,12 +368,12 @@ void initialize() {
 	tree->length = 70;
 	tree->splitSizeFactor = 0.8;
 	drawables.push_back(tree);
-	mainTree = tree;
-	TreeBehavior *tb = new TreeBehavior(mainTree);
+	TreeBehavior *tb = new TreeBehavior(tree);
 	tb->splitAngleDance = 25;
 	tb->splitAngleDanceFreq = 0.8;
 	tb->depthDance = 4;
 	tb->depthDanceFreq = 1.5;
+	mainTree = tb;
 	updateBehaviors.push_back(tb);
 	SineWave *sineWave = new SineWave;
 	sineWave->pos = { 0, -200 };

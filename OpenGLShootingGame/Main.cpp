@@ -28,6 +28,43 @@ struct Point : public IDrawable {
 	}
 };
 
+struct Tree : public IDrawable {
+	Vector2f pos;
+	int depth = 3;
+	float length = 100;
+	float startAngle;
+	float splitAngle = 30;
+	float splitSizeFactor = 2.0 / 3.0;
+	void draw() {
+		glPushMatrix();
+		glTranslatef(pos.x, pos.y, 0);
+		glRotatef(startAngle, 0, 0, 1);
+		makeTree(length, depth);
+		glPopMatrix();
+	}
+	void makeTree(float length, int depth) {
+		if (depth == 0) return;
+		glPushMatrix();
+		glBegin(GL_LINES);
+		glVertex2f(0, 0);
+		glVertex2f(0, length);
+		glEnd();
+		glTranslatef(0, length, 0);
+
+		glPushMatrix();
+		glRotatef(splitAngle, 0, 0, 1);
+		makeTree(length * splitSizeFactor, depth - 1);
+		glPopMatrix();
+
+		glPushMatrix();
+		glRotatef(-splitAngle, 0, 0, 1);
+		makeTree(length * splitSizeFactor, depth - 1);
+		glPopMatrix();
+
+		glPopMatrix();
+	}
+};
+
 time_point<system_clock> START_TIME;
 time_point<system_clock> PREVIOUS_TIME;
 time_point<system_clock> CURRENT_TIME;
@@ -59,7 +96,7 @@ void setDefaultColor() {
 void drawCircle(int glPrimitive, Vector2f radius) {
 	int rounds = radius.x + radius.y; // how precise the circle is, this number is made up
 	float factor = 2 * PI / rounds;
-	
+
 	glBegin(glPrimitive);
 	for (int i = 0; i < rounds; i++) {
 		float theta = i * factor;
@@ -92,7 +129,7 @@ void display() {
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluOrtho2D(-W/2, W/2, -H/2, H/2);
+	gluOrtho2D(-W / 2, W / 2, -H / 2, H / 2);
 
 	for (size_t i = 0; i < drawables.size(); i++)
 	{
@@ -106,7 +143,7 @@ void display() {
 Vector2f screenToWorld(int x, int y) {
 	float sx = x - W / 2.0f;
 	float sy = (H - y) - H / 2.0f;
-	return { sx, sy };
+	return{ sx, sy };
 }
 
 void click(int btn, int st, int x, int y) {
@@ -116,6 +153,12 @@ void click(int btn, int st, int x, int y) {
 		Point *apoint = new Point;
 		apoint->pos = { p.x, p.y };
 		drawables.push_back(apoint);
+
+		Tree *tree = new Tree;
+		tree->pos = { p.x, p.y };
+		tree->startAngle = playerAngle - 90;
+		tree->splitAngle = 30;
+		drawables.push_back(tree);
 	}
 }
 
@@ -133,7 +176,7 @@ void update() {
 	TIME_DELTA = CURRENT_TIME - PREVIOUS_TIME;
 	if ((int)time() > lastTime) {
 		lastTime = (int)time();
-		cout << "Average FPS: " << (float) framesDrawn / lastTime << endl;
+		cout << "Average FPS: " << (float)framesDrawn / lastTime << endl;
 	}
 	beforeRedisplay();
 	glutPostRedisplay();

@@ -219,6 +219,10 @@ float sineShiftFunc(float theta) {
 	return sinAmplitude*sin(sinFrequency*theta);
 }
 
+float analogSineShiftFunc(float theta) {
+	return sinAmplitude*roundf(sin(2*PI*theta));
+}
+
 // can also draw ellipse too
 void drawCircle(int glPrimitive, Vector2f radius, float(*shiftFunc)(float theta) = NULL) {
 	int rounds = radius.x + radius.y; // how precise the circle is, this number is made up
@@ -370,7 +374,11 @@ void genCircle(Vector2f p) {
 	float rad = 30 + rand() % 30;
 	circle->radius = { rad, rad };
 	circle->pos = { p.x, p.y };
-	circle->shiftFunc = sineShiftFunc;
+	int ran = rand() % 2;
+	if (ran)
+		circle->shiftFunc = sineShiftFunc;
+	else
+		circle->shiftFunc = analogSineShiftFunc;
 	circle->angle = 0;
 	circle->color = getRandomColor();
 	drawables.push_back(circle);

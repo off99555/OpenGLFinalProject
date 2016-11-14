@@ -1,3 +1,6 @@
+/*
+ * Author: Chanchana Sornsoontorn
+ */
 #include <iostream>
 #include <vector>
 #include <chrono>
@@ -149,7 +152,7 @@ struct TreeBehavior : public IUpdateBehavior {
 	float splitAngleDanceFreq = 1;
 	int depth;
 	int depthDance = 0;
-	int depthDanceFreq = 1;
+	float depthDanceFreq = 1;
 	float length;
 	float lengthDance = 0;
 	float lengthDanceFreq = 1;
@@ -195,7 +198,7 @@ vector<Vector2f> points;
 Vector2f playerPosition = { -326, -263 };
 Vector2f playerSpeed;
 float playerAngle = 0;
-TreeBehavior *mainTree;
+vector<TreeBehavior*> mainTree;
 vector<SineWaveBehavior*> mainWave;
 float sinAmplitude = 3.0;
 float sinFrequency = 10 * PI;
@@ -521,13 +524,16 @@ void mainMenu(int val) {
 			mainWave[i]->shiftRate *= -1;
 	}
 	else if (val == 1) {
-		mainTree->toggleSplitAngleDance();
+		for (int i = 0; i < mainTree.size(); i++)
+			mainTree[i]->toggleSplitAngleDance();
 	}
 	else if (val == 2) {
-		mainTree->toggleDepthDance();
+		for (int i = 0; i < mainTree.size(); i++)
+			mainTree[i]->toggleDepthDance();
 	}
 	else if (val == 3) {
-		mainTree->toggleLengthDance();
+		for (int i = 0; i < mainTree.size(); i++)
+			mainTree[i]->toggleLengthDance();
 	}
 }
 
@@ -546,24 +552,26 @@ void genWave(Vector2f p) {
 	mainWave.push_back(sineBehavior);
 }
 
-void genTree(Vector2f p) {
+void genTree(Vector2f p, int length=70, int lengthDance=35, int depth = 8, int startAngle = 0,
+	float splitAngleDance = 24, float splitAngleDanceFreq = 0.8, float depthDanceFreq = 0.2,
+	float lengthDanceFreq = 0.3, int depthDance = 4, float splitAngle = 40, float splitSizeFactor = 0.8) {
 	Tree *tree = new Tree;
 	tree->pos = p;
-	tree->startAngle = 0;
-	tree->splitAngle = 40;
-	tree->depth = 8;
-	tree->length = 70;
-	tree->splitSizeFactor = 0.8;
+	tree->startAngle = startAngle;
+	tree->splitAngle = splitAngle;
+	tree->depth = depth;
+	tree->length = length;
+	tree->splitSizeFactor = splitSizeFactor;
 	drawables.push_back(tree);
 	TreeBehavior *tb = new TreeBehavior(tree);
-	tb->splitAngleDance = 25;
-	tb->splitAngleDanceFreq = 0.8;
-	tb->depthDance = 4;
-	tb->depthDanceFreq = 1.5;
-	tb->lengthDance = 35;
-	tb->lengthDanceFreq = 0.4;
+	tb->splitAngleDance = splitAngleDance;
+	tb->splitAngleDanceFreq = splitAngleDanceFreq;
+	tb->depthDance = depthDance;
+	tb->depthDanceFreq = depthDanceFreq;
+	tb->lengthDance = lengthDance;
+	tb->lengthDanceFreq = lengthDanceFreq;
 	updateBehaviors.push_back(tb);
-	mainTree = tb;
+	mainTree.push_back(tb);
 
 }
 void initialize() {
@@ -585,6 +593,8 @@ void initialize() {
 	//middle->pos = { 0, 0 };
 	//drawables.push_back(middle);
 	genTree({ -5, -120 });
+	genTree({ -312, -173 }, 30, 10, 3, 10, 10, 1.5, 0.75, 0.4, 2, 25, 0.9);
+	genTree({ 281, -232 }, 30, 10, 7, -20, 15, 2.0, 0.9, 0.8, 3, 30, 0.8);
 
 	genWave({ 0, -200 });
 	genWave({ 0, -230 });

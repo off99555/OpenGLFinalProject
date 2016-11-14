@@ -208,21 +208,20 @@ void setDefaultLineWidth() {
 	glLineWidth(1);
 }
 
-// just a placeholder for function argument
-Vector2f zeroShiftFunc(float theta) {
-	return{ 0, 0 };
+float sineShiftFunc(float theta) {
+	return sin(theta);
 }
 
 // can also draw ellipse too
-void drawCircle(int glPrimitive, Vector2f radius, Vector2f(*shiftFunc)(float) = zeroShiftFunc) {
+void drawCircle(int glPrimitive, Vector2f radius, float(*shiftFunc)(float theta) = NULL) {
 	int rounds = radius.x + radius.y; // how precise the circle is, this number is made up
 	float factor = 2 * PI / rounds;
 
 	glBegin(glPrimitive);
 	for (int i = 0; i < rounds; i++) {
 		float theta = i * factor;
-		Vector2f shift = shiftFunc(theta);
-		glVertex2f(radius.x*cosf(theta) + shift.x, radius.y*sinf(theta) + shift.y);
+		float shift = shiftFunc ? shiftFunc(theta) : 0;
+		glVertex2f(radius.x*cosf(theta), radius.y*sinf(theta));
 	}
 	glEnd();
 }
@@ -240,7 +239,7 @@ void drawRect(int glPrimitve, float w, float h) {
 void drawPlayer(float rad, Vector2f gunSize) {
 	glPushMatrix();
 	glTranslatef(playerPosition.x, playerPosition.y, 0);
-	drawCircle(GL_POLYGON, { rad, rad });
+	drawCircle(GL_LINE_LOOP, { rad, rad }, sineShiftFunc);
 	glRotatef(playerAngle - 90, 0, 0, 1);
 	drawRect(GL_LINE_LOOP, gunSize.x, gunSize.y);
 	glPopMatrix();

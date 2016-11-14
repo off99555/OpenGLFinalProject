@@ -13,6 +13,12 @@ struct Vector2f {
 	float y;
 };
 
+struct Vector3f {
+	float x;
+	float y;
+	float z;
+};
+
 float distance(Vector2f a, Vector2f b) {
 	float diffX = a.x - b.x;
 	float diffY = a.y - b.y;
@@ -34,23 +40,34 @@ struct Point : public IDrawable {
 	}
 };
 
+vector<Vector3f> availableColors = { {0, 0.5, 0}, {1, 0.5, 0.5},
+{120, 231, 0} };
+
 struct Tree : public IDrawable {
 	Vector2f pos;
-	int depth = 9;
+	int depth = 7;
 	float length = 30;
 	float startAngle;
 	float splitAngle = 15;
 	float splitSizeFactor = 0.9;
+	int colorCounter = 0;
 	void draw() {
 		glPushMatrix();
 		glTranslatef(pos.x, pos.y, 0);
 		glRotatef(startAngle, 0, 0, 1);
+		colorCounter = 0;
 		makeTree(length, depth);
 		glPopMatrix();
+	}
+	void setNextColor() {
+		Vector3f currentColor = availableColors[colorCounter];
+		glColor3f(currentColor.x, currentColor.y, currentColor.z);
+		++colorCounter %= availableColors.size();
 	}
 	void makeTree(float length, int depth) {
 		if (depth == 0) return;
 		glPushMatrix();
+		setNextColor();
 		glBegin(GL_LINES);
 		glVertex2f(0, 0);
 		glVertex2f(0, length);
@@ -132,7 +149,7 @@ void drawPlayer(float rad, Vector2f gunSize) {
 
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT);
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(51/255.0, 255/255.0, 189/255.0, 1.0f);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluOrtho2D(-W / 2, W / 2, -H / 2, H / 2);
@@ -165,6 +182,8 @@ void click(int btn, int st, int x, int y) {
 		tree->pos = { p.x, p.y };
 		tree->startAngle = playerAngle - 90;
 		tree->length = distance(tree->pos, playerPosition) * 0.3;
+		tree->depth = 6;
+		tree->splitAngle = 30;
 		drawables.push_back(tree);
 	}
 }
@@ -252,6 +271,12 @@ void initialize() {
 	//Point *middle = new Point;
 	//middle->pos = { 0, 0 };
 	//drawables.push_back(middle);
+	Tree *tree = new Tree;
+	tree->pos = { 230, -82 };
+	tree->startAngle = 0;
+	tree->depth = 7;
+	drawables.push_back(tree);
+	srand(time(NULL));
 	START_TIME = system_clock::now();
 	CURRENT_TIME = system_clock::now();
 }

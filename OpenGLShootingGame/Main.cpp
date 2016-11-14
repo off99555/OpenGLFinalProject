@@ -267,6 +267,42 @@ struct Circle : public IDrawable, public IRotateAble, public IScaleAble {
 	}
 };
 
+struct Triangle : public IDrawable, public IRotateAble, public IScaleAble {
+	Vector2f points[3];
+	Vector2f pos;
+	float angle;
+	float scale;
+	Vector3f color[3];
+	Vector2f *center = 0;
+	bool middle; // determine whether you want the triangle's pivot point to be in the middle
+	void draw() {
+		if (center == 0 && middle) {
+			center = new Vector2f;
+			center->x = (points[0].x + points[1].x + points[2].x) / 3.0f;
+			center->y = (points[0].y + points[1].y + points[2].y) / 3.0f;
+		}
+		glPushMatrix();
+		glTranslatef(pos.x, pos.y, 0);
+		glRotatef(angle, 0, 0, 1);
+		glScalef(scale, scale, scale);
+		if (middle)
+			glTranslatef(-center->x, -center->y, 0);
+		glBegin(GL_TRIANGLES);
+		for (int i = 0; i < 3; i++) {
+			glColor3f(color[i].x, color[i].y, color[i].z);
+			glVertex2f(points[i].x, points[i].y);
+		}
+		glEnd();
+		glPopMatrix();
+	}
+	void addAngle(float angle) {
+		this->angle += angle;
+	}
+	void setScale(float scale) {
+		this->scale = scale;
+	}
+};
+
 struct RotateBehavior : public IUpdateBehavior {
 	IRotateAble *rotateAble;
 	float rotateSpeed;
@@ -348,6 +384,30 @@ void genCircle(Vector2f p) {
 	updateBehaviors.push_back(scaleBehavior);
 }
 
+void genTriangle(Vector2f p) {
+	Triangle *triangle = new Triangle;
+	triangle->pos = { p.x, p.y };
+	triangle->angle = 0;
+	for (int i = 0; i < 3; i++) {
+		float rx = 20 + rand() % 50;
+		float ry = 20 + rand() % 50;
+		if (rand() % 2) rx = -rx;
+		if (rand() % 2) ry = -ry;
+		triangle->points[i] = {rx, ry};
+		triangle->color[i] = getRandomColor();
+	}
+	triangle->middle = rand() % 2;
+	drawables.push_back(triangle);
+	RotateBehavior *rotateBehavior = new RotateBehavior;
+	rotateBehavior->rotateAble = triangle;
+	rotateBehavior->rotateSpeed = rand() % 300 - 150;
+	updateBehaviors.push_back(rotateBehavior);
+	ScaleBehavior *scaleBehavior = new ScaleBehavior;
+	scaleBehavior->scaleAble = triangle;
+	scaleBehavior->scaleDance = 0.5 * (rand() % 20) / 19.0;
+	updateBehaviors.push_back(scaleBehavior);
+}
+
 void click(int btn, int st, int x, int y) {
 	if (st == GLUT_DOWN) {
 		Vector2f p = screenToWorld(x, y);
@@ -364,6 +424,7 @@ void click(int btn, int st, int x, int y) {
 		//tree->splitAngle = 30;
 		//drawables.push_back(tree);
 		genCircle(p);
+		genTriangle(p);
 	}
 }
 
@@ -517,6 +578,11 @@ void initialize() {
 	for (int i = 0; i < 10; i++)
 		genCircle({ -303, 228 });
 
+	genTriangle({ 300, 200 });
+	genTriangle({ 300, 200 });
+	genTriangle({ 300, 200 });
+	genTriangle({ 300, 200 });
+	genTriangle({ 300, 200 });
 	srand(time(NULL));
 	START_TIME = system_clock::now();
 	CURRENT_TIME = system_clock::now();

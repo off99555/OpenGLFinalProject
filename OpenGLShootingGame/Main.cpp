@@ -105,11 +105,17 @@ struct TreeBehavior : public IUpdateBehavior {
 	Tree *tree;
 	float splitAngle;
 	float splitAngleDance = 0;
+	float splitAngleDanceFreq = 1;
+	int depth;
+	int depthDance = 0;
+	int depthDanceFreq = 1;
 	TreeBehavior(Tree* tree) : tree(tree) {
 		splitAngle = tree->splitAngle;
+		depth = tree->depth;
 	}
 	void update(float time, float timeDelta) {
-		tree->splitAngle = splitAngle + splitAngleDance * sin(time);
+		tree->splitAngle = splitAngle + splitAngleDance * sin(splitAngleDanceFreq * time);
+		tree->depth = depth + (int)roundf(depthDance * sin(depthDanceFreq * time));
 	}
 };
 
@@ -318,6 +324,9 @@ void initialize() {
 	mainTree = tree;
 	TreeBehavior *tb = new TreeBehavior(mainTree);
 	tb->splitAngleDance = 25;
+	tb->splitAngleDanceFreq = 0.5;
+	tb->depthDance = 4;
+	tb->depthDanceFreq = 1.5;
 	updateBehaviors.push_back(tb);
 	srand(time(NULL));
 	START_TIME = system_clock::now();

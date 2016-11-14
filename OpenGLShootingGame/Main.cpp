@@ -77,7 +77,7 @@ struct SineWaveBehavior : public IUpdateBehavior {
 		shift = wave->shift;
 	}
 	void update(float time, float timeDelta) {
-		wave->shift = shift + shiftRate * time;
+		wave->shift += shiftRate * timeDelta;
 	}
 };
 
@@ -171,6 +171,7 @@ Vector2f playerPosition = { -326, -263 };
 Vector2f playerSpeed;
 float playerAngle = 0;
 Tree *mainTree;
+SineWaveBehavior *mainWave;
 
 double time() {
 	return TIME.count(); // returns time since game loaded in seconds
@@ -259,6 +260,7 @@ void click(int btn, int st, int x, int y) {
 		//tree->depth = 6;
 		//tree->splitAngle = 30;
 		//drawables.push_back(tree);
+		mainWave->shiftRate *= -1;
 	}
 }
 
@@ -371,8 +373,9 @@ void initialize() {
 	sineWave->frequency = 0.15;
 	drawables.push_back(sineWave);
 	SineWaveBehavior *sineBehavior = new SineWaveBehavior(sineWave);
-	sineBehavior->shiftRate = 10.0;
+	sineBehavior->shiftRate = 30.0;
 	updateBehaviors.push_back(sineBehavior);
+	mainWave = sineBehavior;
 	srand(time(NULL));
 	START_TIME = system_clock::now();
 	CURRENT_TIME = system_clock::now();

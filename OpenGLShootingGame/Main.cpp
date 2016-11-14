@@ -30,11 +30,11 @@ struct Point : public IDrawable {
 
 struct Tree : public IDrawable {
 	Vector2f pos;
-	int depth = 8;
-	float length = 100;
+	int depth = 10;
+	float length = 30;
 	float startAngle;
-	float splitAngle = 50;
-	float splitSizeFactor = 2.0 / 3.0;
+	float splitAngle = 15;
+	float splitSizeFactor = 0.9;
 	void draw() {
 		glPushMatrix();
 		glTranslatef(pos.x, pos.y, 0);
@@ -136,6 +136,7 @@ void display() {
 		setDefaultColor();
 		drawables[i]->draw();
 	}
+	setDefaultColor();
 	drawPlayer(25, { 10, 60 });
 	glutSwapBuffers();
 }
@@ -241,9 +242,9 @@ void initialize() {
 	glutPassiveMotionFunc(passiveMotion);
 	glutKeyboardFunc(keyboard);
 	glutKeyboardUpFunc(keyboardUp);
-	Point *middle = new Point;
-	middle->pos = { 0, 0 };
-	drawables.push_back(middle);
+	//Point *middle = new Point;
+	//middle->pos = { 0, 0 };
+	//drawables.push_back(middle);
 	START_TIME = system_clock::now();
 	CURRENT_TIME = system_clock::now();
 }

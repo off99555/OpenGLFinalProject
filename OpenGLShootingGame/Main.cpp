@@ -30,6 +30,10 @@ struct IDrawable {
 	virtual void draw() = 0;
 };
 
+struct IUpdateBehavior {
+	virtual void update(float time, float timeDelta) = 0;
+};
+
 struct Point : public IDrawable {
 	Vector2f pos;
 	float size = 10;
@@ -97,6 +101,18 @@ struct Tree : public IDrawable {
 	}
 };
 
+struct TreeBehavior : public IUpdateBehavior {
+	Tree *tree;
+	float splitAngle;
+	float splitAngleDance = 0;
+	TreeBehavior(Tree* tree) : tree(tree) {
+		splitAngle = tree->splitAngle;
+	}
+	void update(float time, float timeDelta) {
+		tree->splitAngle = splitAngle + splitAngleDance * sin(time);
+	}
+};
+
 time_point<system_clock> START_TIME;
 time_point<system_clock> PREVIOUS_TIME;
 time_point<system_clock> CURRENT_TIME;
@@ -106,6 +122,7 @@ int W = 800;
 int H = 600;
 float PLAYER_SPEED = 500.0f;
 
+vector<IUpdateBehavior*> updateBehaviors;
 vector<IDrawable*> drawables;
 vector<Vector2f> points;
 Vector2f playerPosition = { -326, -263 };
@@ -206,7 +223,6 @@ void click(int btn, int st, int x, int y) {
 void beforeRedisplay() {
 	playerPosition.x += playerSpeed.x * timeDelta();
 	playerPosition.y += playerSpeed.y * timeDelta();
-	mainTree->splitAngle = 30 + 20 * sin(time());
 }
 
 void update() {
@@ -219,6 +235,10 @@ void update() {
 	if ((int)time() > lastTime) {
 		lastTime = (int)time();
 		cout << "Average FPS: " << (float)framesDrawn / lastTime << endl;
+	}
+	for (size_t i = 0; i < updateBehaviors.size(); i++)
+	{
+		updateBehaviors[i]->update(time(), timeDelta());
 	}
 	beforeRedisplay();
 	glutPostRedisplay();
@@ -296,6 +316,9 @@ void initialize() {
 	tree->splitSizeFactor = 0.8;
 	drawables.push_back(tree);
 	mainTree = tree;
+	TreeBehavior *tb = new TreeBehavior(mainTree);
+	tb->splitAngleDance = 25;
+	updateBehaviors.push_back(tb);
 	srand(time(NULL));
 	START_TIME = system_clock::now();
 	CURRENT_TIME = system_clock::now();

@@ -50,19 +50,34 @@ struct SineWave : public IDrawable {
 	float length = 100;
 	float amplitude = 10;
 	float frequency = 1;
+	float shift = 0;
+	Vector3f color = { 141/255.0f, 14/255.0f, 200/255.0f };
 	void draw() {
 		glPushMatrix();
 		glTranslatef(pos.x, pos.y, 0);
 		glTranslatef(-length / 2, 0, 0);
+		glColor3f(color.x, color.y, color.z);
 		glBegin(GL_LINE_STRIP);
 		int rounds = round(length) * frequency * amplitude / 10; // made up number
 		float factor = length / rounds;
 		for (int i = 0; i <= rounds; i++) {
 			float x = i * factor;
-			glVertex2f(x, amplitude * sinf(frequency * x));
+			glVertex2f(x, amplitude * sinf(frequency * (x + shift)));
 		}
 		glEnd();
 		glPopMatrix();
+	}
+};
+
+struct SineWaveBehavior : public IUpdateBehavior {
+	SineWave *wave;
+	float shift;
+	float shiftRate = 0;
+	SineWaveBehavior(SineWave *wave) : wave(wave) {
+		shift = wave->shift;
+	}
+	void update(float time, float timeDelta) {
+		wave->shift = shift + shiftRate * time;
 	}
 };
 
@@ -350,11 +365,14 @@ void initialize() {
 	tb->depthDanceFreq = 1.5;
 	updateBehaviors.push_back(tb);
 	SineWave *sineWave = new SineWave;
-	sineWave->pos = { 0, -153 };
-	sineWave->length = 500;
-	sineWave->amplitude = 30;
-	sineWave->frequency = 1;
+	sineWave->pos = { 0, -200 };
+	sineWave->length = 200;
+	sineWave->amplitude = 25;
+	sineWave->frequency = 0.15;
 	drawables.push_back(sineWave);
+	SineWaveBehavior *sineBehavior = new SineWaveBehavior(sineWave);
+	sineBehavior->shiftRate = 10.0;
+	updateBehaviors.push_back(sineBehavior);
 	srand(time(NULL));
 	START_TIME = system_clock::now();
 	CURRENT_TIME = system_clock::now();

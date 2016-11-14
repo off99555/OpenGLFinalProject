@@ -7,6 +7,7 @@
 
 using namespace std;
 using namespace chrono;
+void setDefaultLineWidth();
 
 struct Vector2f {
 	float x;
@@ -40,8 +41,13 @@ struct Point : public IDrawable {
 	}
 };
 
-vector<Vector3f> availableColors = { {0, 0.5, 0}, {1, 0.5, 0.5},
-{120, 231, 0} };
+vector<Vector3f> availableColors = {
+	{ 255 / 255.0f, 87 / 255.0f, 51 / 255.0f },
+	{ 255 / 255.0f, 189 / 255.0f, 51 / 255.0f },
+	{ 219 / 255.0f, 255 / 255.0f, 51 / 255.0f },
+	{ 117 / 255.0f, 255 / 255.0f, 51 / 255.0f },
+	{ 51 / 255.0f, 255 / 255.0f, 87 / 255.0f }
+};
 
 struct Tree : public IDrawable {
 	Vector2f pos;
@@ -51,12 +57,13 @@ struct Tree : public IDrawable {
 	float splitAngle = 15;
 	float splitSizeFactor = 0.9;
 	int colorCounter = 0;
+	float width = 10.0f;
 	void draw() {
 		glPushMatrix();
 		glTranslatef(pos.x, pos.y, 0);
 		glRotatef(startAngle, 0, 0, 1);
 		colorCounter = 0;
-		makeTree(length, depth);
+		makeTree(length, depth, width);
 		glPopMatrix();
 	}
 	void setNextColor() {
@@ -64,9 +71,10 @@ struct Tree : public IDrawable {
 		glColor3f(currentColor.x, currentColor.y, currentColor.z);
 		++colorCounter %= availableColors.size();
 	}
-	void makeTree(float length, int depth) {
+	void makeTree(float length, int depth, float currentWidth) {
 		if (depth == 0) return;
 		glPushMatrix();
+		glLineWidth(currentWidth);
 		setNextColor();
 		glBegin(GL_LINES);
 		glVertex2f(0, 0);
@@ -76,14 +84,15 @@ struct Tree : public IDrawable {
 
 		glPushMatrix();
 		glRotatef(splitAngle, 0, 0, 1);
-		makeTree(length * splitSizeFactor, depth - 1);
+		makeTree(length * splitSizeFactor, depth - 1, currentWidth * splitSizeFactor);
 		glPopMatrix();
 
 		glPushMatrix();
 		glRotatef(-splitAngle, 0, 0, 1);
-		makeTree(length * splitSizeFactor, depth - 1);
+		makeTree(length * splitSizeFactor, depth - 1, currentWidth * splitSizeFactor);
 		glPopMatrix();
 
+		setDefaultLineWidth();
 		glPopMatrix();
 	}
 };
@@ -99,9 +108,10 @@ float PLAYER_SPEED = 500.0f;
 
 vector<IDrawable*> drawables;
 vector<Vector2f> points;
-Vector2f playerPosition;
+Vector2f playerPosition = { -326, -263 };
 Vector2f playerSpeed;
 float playerAngle = 0;
+Tree *mainTree;
 
 double time() {
 	return TIME.count(); // returns time since game loaded in seconds
@@ -113,6 +123,9 @@ double timeDelta() { // time between last frame and current frame
 
 void setDefaultColor() {
 	glColor3f(0, 0, 0);
+}
+void setDefaultLineWidth() {
+	glLineWidth(1);
 }
 
 // can also draw ellipse too
@@ -149,7 +162,7 @@ void drawPlayer(float rad, Vector2f gunSize) {
 
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT);
-	glClearColor(51/255.0, 255/255.0, 189/255.0, 1.0f);
+	glClearColor(14 / 255.0f, 167 / 255.0f, 200 / 255.0f, 1.0f);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluOrtho2D(-W / 2, W / 2, -H / 2, H / 2);
@@ -157,9 +170,11 @@ void display() {
 	for (size_t i = 0; i < drawables.size(); i++)
 	{
 		setDefaultColor();
+		setDefaultLineWidth();
 		drawables[i]->draw();
 	}
 	setDefaultColor();
+	setDefaultLineWidth();
 	drawPlayer(25, { 10, 60 });
 	glutSwapBuffers();
 }
@@ -191,6 +206,7 @@ void click(int btn, int st, int x, int y) {
 void beforeRedisplay() {
 	playerPosition.x += playerSpeed.x * timeDelta();
 	playerPosition.y += playerSpeed.y * timeDelta();
+	mainTree->splitAngle = 30 + 10 * sin(time());
 }
 
 void update() {
@@ -272,10 +288,14 @@ void initialize() {
 	//middle->pos = { 0, 0 };
 	//drawables.push_back(middle);
 	Tree *tree = new Tree;
-	tree->pos = { 230, -82 };
+	tree->pos = { -5, -120 };
 	tree->startAngle = 0;
-	tree->depth = 7;
+	tree->splitAngle = 30;
+	tree->depth = 8;
+	tree->length = 70;
+	tree->splitSizeFactor = 0.8;
 	drawables.push_back(tree);
+	mainTree = tree;
 	srand(time(NULL));
 	START_TIME = system_clock::now();
 	CURRENT_TIME = system_clock::now();

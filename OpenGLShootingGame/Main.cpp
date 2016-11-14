@@ -208,15 +208,21 @@ void setDefaultLineWidth() {
 	glLineWidth(1);
 }
 
+// just a placeholder for function argument
+Vector2f zeroShiftFunc(float theta) {
+	return{ 0, 0 };
+}
+
 // can also draw ellipse too
-void drawCircle(int glPrimitive, Vector2f radius) {
+void drawCircle(int glPrimitive, Vector2f radius, Vector2f(*shiftFunc)(float) = zeroShiftFunc) {
 	int rounds = radius.x + radius.y; // how precise the circle is, this number is made up
 	float factor = 2 * PI / rounds;
 
 	glBegin(glPrimitive);
 	for (int i = 0; i < rounds; i++) {
 		float theta = i * factor;
-		glVertex2f(radius.x*cosf(theta), radius.y*sinf(theta));
+		Vector2f shift = shiftFunc(theta);
+		glVertex2f(radius.x*cosf(theta) + shift.x, radius.y*sinf(theta) + shift.y);
 	}
 	glEnd();
 }

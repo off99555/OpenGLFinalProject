@@ -189,24 +189,24 @@ void click(int btn, int st, int x, int y) {
 	if (st == GLUT_DOWN) {
 		Vector2f p = screenToWorld(x, y);
 		cout << "Clicked at: " << p.x << " " << p.y << endl;
-		Point *apoint = new Point;
-		apoint->pos = { p.x, p.y };
-		drawables.push_back(apoint);
+		//Point *apoint = new Point;
+		//apoint->pos = { p.x, p.y };
+		//drawables.push_back(apoint);
 
-		Tree *tree = new Tree;
-		tree->pos = { p.x, p.y };
-		tree->startAngle = playerAngle - 90;
-		tree->length = distance(tree->pos, playerPosition) * 0.3;
-		tree->depth = 6;
-		tree->splitAngle = 30;
-		drawables.push_back(tree);
+		//Tree *tree = new Tree;
+		//tree->pos = { p.x, p.y };
+		//tree->startAngle = playerAngle - 90;
+		//tree->length = distance(tree->pos, playerPosition) * 0.3;
+		//tree->depth = 6;
+		//tree->splitAngle = 30;
+		//drawables.push_back(tree);
 	}
 }
 
 void beforeRedisplay() {
 	playerPosition.x += playerSpeed.x * timeDelta();
 	playerPosition.y += playerSpeed.y * timeDelta();
-	mainTree->splitAngle = 30 + 10 * sin(time());
+	mainTree->splitAngle = 30 + 20 * sin(time());
 }
 
 void update() {
@@ -306,7 +306,7 @@ int main(int argc, char **argv) {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(W, H);
 	glutInitWindowPosition(500, 100);
-	glutCreateWindow("Shooting Game by Off");
+	glutCreateWindow("Dancing Tree of Wisdom by Off");
 	initialize();
 	glutMainLoop();
 	return 0;

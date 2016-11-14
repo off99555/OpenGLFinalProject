@@ -192,6 +192,8 @@ Vector2f playerSpeed;
 float playerAngle = 0;
 TreeBehavior *mainTree;
 SineWaveBehavior *mainWave;
+float sinAmplitude = 3.0;
+float sinFrequency = 10 * PI;
 
 double time() {
 	return TIME.count(); // returns time since game loaded in seconds
@@ -209,7 +211,7 @@ void setDefaultLineWidth() {
 }
 
 float sineShiftFunc(float theta) {
-	return sin(theta);
+	return sinAmplitude*sin(sinFrequency*theta);
 }
 
 // can also draw ellipse too
@@ -221,7 +223,9 @@ void drawCircle(int glPrimitive, Vector2f radius, float(*shiftFunc)(float theta)
 	for (int i = 0; i < rounds; i++) {
 		float theta = i * factor;
 		float shift = shiftFunc ? shiftFunc(theta) : 0;
-		glVertex2f(radius.x*cosf(theta), radius.y*sinf(theta));
+		float shiftX = cos(theta) * shift;
+		float shiftY = sin(theta) * shift;
+		glVertex2f(radius.x*cosf(theta) + shiftX, radius.y*sinf(theta) + shiftY);
 	}
 	glEnd();
 }
@@ -239,7 +243,7 @@ void drawRect(int glPrimitve, float w, float h) {
 void drawPlayer(float rad, Vector2f gunSize) {
 	glPushMatrix();
 	glTranslatef(playerPosition.x, playerPosition.y, 0);
-	drawCircle(GL_LINE_LOOP, { rad, rad }, sineShiftFunc);
+	drawCircle(GL_POLYGON, { rad, rad });
 	glRotatef(playerAngle - 90, 0, 0, 1);
 	drawRect(GL_LINE_LOOP, gunSize.x, gunSize.y);
 	glPopMatrix();

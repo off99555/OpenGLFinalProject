@@ -51,7 +51,7 @@ struct SineWave : public IDrawable {
 	float amplitude = 10;
 	float frequency = 1;
 	float shift = 0;
-	Vector3f color = { 141/255.0f, 14/255.0f, 200/255.0f };
+	Vector3f color = { 141 / 255.0f, 14 / 255.0f, 200 / 255.0f };
 	void draw() {
 		glPushMatrix();
 		glTranslatef(pos.x, pos.y, 0);
@@ -145,13 +145,33 @@ struct TreeBehavior : public IUpdateBehavior {
 	int depth;
 	int depthDance = 0;
 	int depthDanceFreq = 1;
+	float length;
+	float lengthDance = 0;
+	float lengthDanceFreq = 1;
+	bool splitAngleDancing = 1;
+	bool depthDancing = 1;
+	bool lengthDancing = 1;
 	TreeBehavior(Tree* tree) : tree(tree) {
 		splitAngle = tree->splitAngle;
 		depth = tree->depth;
+		length = tree->length;
 	}
 	void update(float time, float timeDelta) {
-		tree->splitAngle = splitAngle + splitAngleDance * sin(splitAngleDanceFreq * time);
-		tree->depth = depth + (int)roundf(depthDance * sin(depthDanceFreq * time));
+		if (splitAngleDancing)
+			tree->splitAngle = splitAngle + splitAngleDance * sin(splitAngleDanceFreq * time);
+		if (depthDancing)
+			tree->depth = depth + (int)roundf(depthDance * sin(depthDanceFreq * time));
+		if (lengthDancing)
+			tree->length = length + lengthDance * sin(lengthDanceFreq * time);
+	}
+	void toggleSplitAngleDance() {
+		splitAngleDancing = !splitAngleDancing;
+	}
+	void toggleDepthDance() {
+		depthDancing = !depthDancing;
+	}
+	void toggleLengthDance() {
+		lengthDancing = !lengthDancing;
 	}
 };
 
@@ -343,6 +363,15 @@ void mainMenu(int val) {
 	if (val == 0) {
 		mainWave->shiftRate *= -1;
 	}
+	else if (val == 1) {
+		mainTree->toggleSplitAngleDance();
+	}
+	else if (val == 2) {
+		mainTree->toggleDepthDance();
+	}
+	else if (val == 3) {
+		mainTree->toggleLengthDance();
+	}
 }
 
 void initialize() {
@@ -355,6 +384,9 @@ void initialize() {
 	glutKeyboardUpFunc(keyboardUp);
 
 	glutCreateMenu(mainMenu);
+	glutAddMenuEntry("Toggle Tree Split Angle Dance", 1);
+	glutAddMenuEntry("Toggle Tree Depth Dance", 2);
+	glutAddMenuEntry("Toggle Tree Length Dance", 3);
 	glutAddMenuEntry("Switch wave direction", 0);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 	//Point *middle = new Point;
@@ -363,7 +395,7 @@ void initialize() {
 	Tree *tree = new Tree;
 	tree->pos = { -5, -120 };
 	tree->startAngle = 0;
-	tree->splitAngle = 30;
+	tree->splitAngle = 40;
 	tree->depth = 8;
 	tree->length = 70;
 	tree->splitSizeFactor = 0.8;
@@ -373,6 +405,8 @@ void initialize() {
 	tb->splitAngleDanceFreq = 0.8;
 	tb->depthDance = 4;
 	tb->depthDanceFreq = 1.5;
+	tb->lengthDance = 35;
+	tb->lengthDanceFreq = 0.4;
 	updateBehaviors.push_back(tb);
 	mainTree = tb;
 

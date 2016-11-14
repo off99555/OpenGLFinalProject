@@ -45,6 +45,27 @@ struct Point : public IDrawable {
 	}
 };
 
+struct SineWave : public IDrawable {
+	Vector2f pos;
+	float length = 100;
+	float amplitude = 10;
+	float frequency = 1;
+	void draw() {
+		glPushMatrix();
+		glTranslatef(pos.x, pos.y, 0);
+		glTranslatef(-length / 2, 0, 0);
+		glBegin(GL_LINE_STRIP);
+		int rounds = round(length) * frequency * amplitude / 10; // made up number
+		float factor = length / rounds;
+		for (int i = 0; i <= rounds; i++) {
+			float x = i * factor;
+			glVertex2f(x, amplitude * sinf(frequency * x));
+		}
+		glEnd();
+		glPopMatrix();
+	}
+};
+
 vector<Vector3f> availableColors = {
 	{ 255 / 255.0f, 87 / 255.0f, 51 / 255.0f },
 	{ 255 / 255.0f, 189 / 255.0f, 51 / 255.0f },
@@ -324,10 +345,16 @@ void initialize() {
 	mainTree = tree;
 	TreeBehavior *tb = new TreeBehavior(mainTree);
 	tb->splitAngleDance = 25;
-	tb->splitAngleDanceFreq = 0.5;
+	tb->splitAngleDanceFreq = 0.8;
 	tb->depthDance = 4;
 	tb->depthDanceFreq = 1.5;
 	updateBehaviors.push_back(tb);
+	SineWave *sineWave = new SineWave;
+	sineWave->pos = { 0, -153 };
+	sineWave->length = 500;
+	sineWave->amplitude = 30;
+	sineWave->frequency = 1;
+	drawables.push_back(sineWave);
 	srand(time(NULL));
 	START_TIME = system_clock::now();
 	CURRENT_TIME = system_clock::now();

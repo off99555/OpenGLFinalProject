@@ -13,6 +13,12 @@ struct Vector2f {
 	float y;
 };
 
+float distance(Vector2f a, Vector2f b) {
+	float diffX = a.x - b.x;
+	float diffY = a.y - b.y;
+	return sqrt(diffX * diffX + diffY * diffY);
+}
+
 struct IDrawable {
 	virtual void draw() = 0;
 };
@@ -30,7 +36,7 @@ struct Point : public IDrawable {
 
 struct Tree : public IDrawable {
 	Vector2f pos;
-	int depth = 10;
+	int depth = 9;
 	float length = 30;
 	float startAngle;
 	float splitAngle = 15;
@@ -158,6 +164,7 @@ void click(int btn, int st, int x, int y) {
 		Tree *tree = new Tree;
 		tree->pos = { p.x, p.y };
 		tree->startAngle = playerAngle - 90;
+		tree->length = distance(tree->pos, playerPosition) * 0.3;
 		drawables.push_back(tree);
 	}
 }

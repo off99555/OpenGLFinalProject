@@ -86,7 +86,8 @@ vector<Vector3f> availableColors = {
 	{ 255 / 255.0f, 189 / 255.0f, 51 / 255.0f },
 	{ 219 / 255.0f, 255 / 255.0f, 51 / 255.0f },
 	{ 117 / 255.0f, 255 / 255.0f, 51 / 255.0f },
-	{ 51 / 255.0f, 255 / 255.0f, 87 / 255.0f }
+	{ 51 / 255.0f, 255 / 255.0f, 87 / 255.0f },
+	{ 141 / 255.0f, 14 / 255.0f, 200 / 255.0f }
 };
 
 Vector3f getRandomColor() {
@@ -195,7 +196,7 @@ Vector2f playerPosition = { -326, -263 };
 Vector2f playerSpeed;
 float playerAngle = 0;
 TreeBehavior *mainTree;
-SineWaveBehavior *mainWave;
+vector<SineWaveBehavior*> mainWave;
 float sinAmplitude = 3.0;
 float sinFrequency = 10 * PI;
 
@@ -444,7 +445,8 @@ void keyboardUp(unsigned char c, int x, int y) {
 
 void mainMenu(int val) {
 	if (val == 0) {
-		mainWave->shiftRate *= -1;
+		for (int i = 0; i < mainWave.size(); i++)
+			mainWave[i]->shiftRate *= -1;
 	}
 	else if (val == 1) {
 		mainTree->toggleSplitAngleDance();
@@ -455,6 +457,21 @@ void mainMenu(int val) {
 	else if (val == 3) {
 		mainTree->toggleLengthDance();
 	}
+}
+
+void genWave(Vector2f p) {
+	SineWave *sineWave = new SineWave;
+	sineWave->pos = p;
+	sineWave->length = 200 + rand() % 100;
+	sineWave->amplitude = 20 + rand() % 10;
+	sineWave->frequency = 0.15 + 0.10 * (rand() % 31) / 30.0;
+	sineWave->color = getRandomColor();
+	drawables.push_back(sineWave);
+	SineWaveBehavior *sineBehavior = new SineWaveBehavior(sineWave);
+	sineBehavior->shiftRate = 30 + rand() % 30;
+	if (rand() % 2) sineBehavior->shiftRate *= -1;
+	updateBehaviors.push_back(sineBehavior);
+	mainWave.push_back(sineBehavior);
 }
 
 void initialize() {
@@ -470,7 +487,7 @@ void initialize() {
 	glutAddMenuEntry("Toggle Tree Split Angle Dance", 1);
 	glutAddMenuEntry("Toggle Tree Depth Dance", 2);
 	glutAddMenuEntry("Toggle Tree Length Dance", 3);
-	glutAddMenuEntry("Switch wave direction", 0);
+	glutAddMenuEntry("Toggle wave direction", 0);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 	//Point *middle = new Point;
 	//middle->pos = { 0, 0 };
@@ -493,16 +510,9 @@ void initialize() {
 	updateBehaviors.push_back(tb);
 	mainTree = tb;
 
-	SineWave *sineWave = new SineWave;
-	sineWave->pos = { 0, -200 };
-	sineWave->length = 200;
-	sineWave->amplitude = 25;
-	sineWave->frequency = 0.15;
-	drawables.push_back(sineWave);
-	SineWaveBehavior *sineBehavior = new SineWaveBehavior(sineWave);
-	sineBehavior->shiftRate = 30.0;
-	updateBehaviors.push_back(sineBehavior);
-	mainWave = sineBehavior;
+	genWave({ 0, -200 });
+	genWave({ 0, -230 });
+	genWave({ 0, -260 });
 
 	for (int i = 0; i < 10; i++)
 		genCircle({ -303, 228 });

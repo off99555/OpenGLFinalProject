@@ -89,6 +89,10 @@ vector<Vector3f> availableColors = {
 	{ 51 / 255.0f, 255 / 255.0f, 87 / 255.0f }
 };
 
+Vector3f getRandomColor() {
+	return availableColors[rand() % availableColors.size()];
+}
+
 struct Tree : public IDrawable {
 	Vector2f pos;
 	int depth = 7;
@@ -230,6 +234,56 @@ void drawCircle(int glPrimitive, Vector2f radius, float(*shiftFunc)(float theta)
 	glEnd();
 }
 
+struct IRotateAble {
+	virtual void addAngle(float angle) = 0;
+};
+
+struct IScaleAble {
+	virtual void setScale(float scale) = 0;
+};
+
+struct Circle : public IDrawable, public IRotateAble, public IScaleAble {
+	Vector2f radius;
+	Vector2f pos;
+	float angle;
+	float scale;
+	float(*shiftFunc)(float theta) = NULL;
+	Vector3f color;
+	void draw() {
+		glPushMatrix();
+		glTranslatef(pos.x, pos.y, 0);
+		glRotatef(angle, 0, 0, 1);
+		glScalef(scale, scale, scale);
+		glColor3f(color.x, color.y, color.z);
+		drawCircle(GL_LINE_LOOP, radius, shiftFunc);
+		glPopMatrix();
+	}
+	void addAngle(float angle) {
+		this->angle += angle;
+	}
+	void setScale(float scale) {
+		this->scale = scale;
+	}
+};
+
+struct RotateBehavior : public IUpdateBehavior {
+	IRotateAble *rotateAble;
+	float rotateSpeed;
+	void update(float time, float timeDelta) {
+		rotateAble->addAngle(rotateSpeed * timeDelta);
+	}
+};
+
+struct ScaleBehavior : public IUpdateBehavior {
+	IScaleAble *scaleAble;
+	float scale = 1;
+	float scaleDance;
+	float scaleDanceFreq = 1;
+	void update(float time, float timeDelta) {
+		scaleAble->setScale(scale + scaleDance * sinf(scaleDanceFreq * time));
+	}
+};
+
 void drawRect(int glPrimitve, float w, float h) {
 	// pivot is at the base
 	glBegin(glPrimitve);
@@ -274,6 +328,25 @@ Vector2f screenToWorld(int x, int y) {
 	return{ sx, sy };
 }
 
+void genCircle(Vector2f p) {
+	Circle *circle = new Circle;
+	float rad = 30 + rand() % 30;
+	circle->radius = { rad, rad };
+	circle->pos = { p.x, p.y };
+	circle->shiftFunc = sineShiftFunc;
+	circle->angle = 0;
+	circle->color = getRandomColor();
+	drawables.push_back(circle);
+	RotateBehavior *rotateBehavior = new RotateBehavior;
+	rotateBehavior->rotateAble = circle;
+	rotateBehavior->rotateSpeed = rand() % 300 - 150;
+	updateBehaviors.push_back(rotateBehavior);
+	ScaleBehavior *scaleBehavior = new ScaleBehavior;
+	scaleBehavior->scaleAble = circle;
+	scaleBehavior->scaleDance = (rand() % 20) / 19.0;
+	updateBehaviors.push_back(scaleBehavior);
+}
+
 void click(int btn, int st, int x, int y) {
 	if (st == GLUT_DOWN) {
 		Vector2f p = screenToWorld(x, y);
@@ -289,6 +362,7 @@ void click(int btn, int st, int x, int y) {
 		//tree->depth = 6;
 		//tree->splitAngle = 30;
 		//drawables.push_back(tree);
+		genCircle(p);
 	}
 }
 
@@ -429,6 +503,9 @@ void initialize() {
 	sineBehavior->shiftRate = 30.0;
 	updateBehaviors.push_back(sineBehavior);
 	mainWave = sineBehavior;
+
+	for (int i = 0; i < 10; i++)
+		genCircle({ -303, 228 });
 
 	srand(time(NULL));
 	START_TIME = system_clock::now();

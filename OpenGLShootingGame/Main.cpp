@@ -112,7 +112,7 @@ struct Tree : public IDrawable {
 		++colorCounter %= availableColors.size();
 	}
 	void makeTree(float length, int depth, float currentWidth) {
-		if (depth == 0) return;
+		if (depth <= 0) return;
 		glPushMatrix();
 		glLineWidth(currentWidth);
 		setNextColor();

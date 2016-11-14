@@ -220,7 +220,7 @@ float sineShiftFunc(float theta) {
 }
 
 float analogSineShiftFunc(float theta) {
-	return sinAmplitude*roundf(sin(2*PI*theta));
+	return sinAmplitude*roundf(sin(2 * PI*theta));
 }
 
 // can also draw ellipse too
@@ -401,7 +401,7 @@ void genTriangle(Vector2f p) {
 		float ry = 20 + rand() % 50;
 		if (rand() % 2) rx = -rx;
 		if (rand() % 2) ry = -ry;
-		triangle->points[i] = {rx, ry};
+		triangle->points[i] = { rx, ry };
 		triangle->color[i] = getRandomColor();
 	}
 	triangle->middle = rand() % 2;
@@ -431,8 +431,11 @@ void click(int btn, int st, int x, int y) {
 		//tree->depth = 6;
 		//tree->splitAngle = 30;
 		//drawables.push_back(tree);
-		genCircle(p);
-		genTriangle(p);
+		int ran = rand() % 2;
+		if (ran)
+			genCircle(p);
+		else
+			genTriangle(p);
 	}
 }
 

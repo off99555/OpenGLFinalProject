@@ -546,6 +546,26 @@ void genWave(Vector2f p) {
 	mainWave.push_back(sineBehavior);
 }
 
+void genTree(Vector2f p) {
+	Tree *tree = new Tree;
+	tree->pos = p;
+	tree->startAngle = 0;
+	tree->splitAngle = 40;
+	tree->depth = 8;
+	tree->length = 70;
+	tree->splitSizeFactor = 0.8;
+	drawables.push_back(tree);
+	TreeBehavior *tb = new TreeBehavior(tree);
+	tb->splitAngleDance = 25;
+	tb->splitAngleDanceFreq = 0.8;
+	tb->depthDance = 4;
+	tb->depthDanceFreq = 1.5;
+	tb->lengthDance = 35;
+	tb->lengthDanceFreq = 0.4;
+	updateBehaviors.push_back(tb);
+	mainTree = tb;
+
+}
 void initialize() {
 	glutDisplayFunc(display);
 	glutIdleFunc(update);
@@ -564,23 +584,7 @@ void initialize() {
 	//Point *middle = new Point;
 	//middle->pos = { 0, 0 };
 	//drawables.push_back(middle);
-	Tree *tree = new Tree;
-	tree->pos = { -5, -120 };
-	tree->startAngle = 0;
-	tree->splitAngle = 40;
-	tree->depth = 8;
-	tree->length = 70;
-	tree->splitSizeFactor = 0.8;
-	drawables.push_back(tree);
-	TreeBehavior *tb = new TreeBehavior(tree);
-	tb->splitAngleDance = 25;
-	tb->splitAngleDanceFreq = 0.8;
-	tb->depthDance = 4;
-	tb->depthDanceFreq = 1.5;
-	tb->lengthDance = 35;
-	tb->lengthDanceFreq = 0.4;
-	updateBehaviors.push_back(tb);
-	mainTree = tb;
+	genTree({ -5, -120 });
 
 	genWave({ 0, -200 });
 	genWave({ 0, -230 });

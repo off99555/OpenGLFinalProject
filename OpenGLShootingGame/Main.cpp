@@ -13,6 +13,21 @@ struct Vector2f {
 	float y;
 };
 
+struct IDrawable {
+	virtual void draw() = 0;
+};
+
+struct Point : public IDrawable {
+	Vector2f pos;
+	float size = 10;
+	void draw() {
+		glPointSize(size);
+		glBegin(GL_POINTS);
+		glVertex2f(pos.x, pos.y);
+		glEnd();
+	}
+};
+
 time_point<system_clock> START_TIME;
 time_point<system_clock> PREVIOUS_TIME;
 time_point<system_clock> CURRENT_TIME;
@@ -22,6 +37,7 @@ int W = 800;
 int H = 600;
 float PLAYER_SPEED = 500.0f;
 
+vector<IDrawable*> drawables;
 vector<Vector2f> points;
 Vector2f playerPosition;
 Vector2f playerSpeed;
@@ -78,14 +94,11 @@ void display() {
 	glLoadIdentity();
 	gluOrtho2D(-W/2, W/2, -H/2, H/2);
 
-	setDefaultColor();
-	glPointSize(10);
-	glBegin(GL_POINTS);
-	for (size_t i = 0; i < points.size(); i++)
+	for (size_t i = 0; i < drawables.size(); i++)
 	{
-		glVertex2f(points[i].x, points[i].y);
+		setDefaultColor();
+		drawables[i]->draw();
 	}
-	glEnd();
 	drawPlayer(25, { 10, 60 });
 	glutSwapBuffers();
 }
@@ -93,14 +106,16 @@ void display() {
 Vector2f screenToWorld(int x, int y) {
 	float sx = x - W / 2.0f;
 	float sy = (H - y) - H / 2.0f;
-	return{ sx, sy };
+	return { sx, sy };
 }
 
 void click(int btn, int st, int x, int y) {
 	if (st == GLUT_DOWN) {
 		Vector2f p = screenToWorld(x, y);
 		cout << "Clicked at: " << p.x << " " << p.y << endl;
-		points.push_back({ p.x, p.y });
+		Point *apoint = new Point;
+		apoint->pos = { p.x, p.y };
+		drawables.push_back(apoint);
 	}
 }
 
@@ -184,7 +199,9 @@ void initialize() {
 	glutPassiveMotionFunc(passiveMotion);
 	glutKeyboardFunc(keyboard);
 	glutKeyboardUpFunc(keyboardUp);
-	points.push_back({ 0, 0 });
+	Point *middle = new Point;
+	middle->pos = { 0, 0 };
+	drawables.push_back(middle);
 	START_TIME = system_clock::now();
 	CURRENT_TIME = system_clock::now();
 }

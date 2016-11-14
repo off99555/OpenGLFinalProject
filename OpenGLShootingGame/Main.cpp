@@ -373,8 +373,9 @@ void initialize() {
 	tb->splitAngleDanceFreq = 0.8;
 	tb->depthDance = 4;
 	tb->depthDanceFreq = 1.5;
-	mainTree = tb;
 	updateBehaviors.push_back(tb);
+	mainTree = tb;
+
 	SineWave *sineWave = new SineWave;
 	sineWave->pos = { 0, -200 };
 	sineWave->length = 200;
@@ -385,6 +386,7 @@ void initialize() {
 	sineBehavior->shiftRate = 30.0;
 	updateBehaviors.push_back(sineBehavior);
 	mainWave = sineBehavior;
+
 	srand(time(NULL));
 	START_TIME = system_clock::now();
 	CURRENT_TIME = system_clock::now();

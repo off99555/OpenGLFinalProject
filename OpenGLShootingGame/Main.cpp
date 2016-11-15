@@ -105,7 +105,7 @@ struct Tree : public IDrawable {
 	float splitAngle = 15;
 	float splitSizeFactor = 0.9;
 	float width = 10.0f;
-	float randomRange = 0.3; // should be between 0 and 1
+	float randomRange = 0.2; // should be between 0 and 1
 	int state; // set to random value for different state on each tree
 	Tree() {
 		state = rand();
@@ -114,7 +114,6 @@ struct Tree : public IDrawable {
 		glPushMatrix();
 		glTranslatef(pos.x, pos.y, 0);
 		glRotatef(startAngle, 0, 0, 1);
-		srand(state);
 		makeTree(length, depth, width, state);
 		glPopMatrix();
 	}
@@ -126,6 +125,7 @@ struct Tree : public IDrawable {
 	float randomness(int state) {
 		return (1.0 - randomRange) + randomRange * 2 * (state % 101 / 100.0f);
 	}
+	int printed = 0;
 	void makeTree(float length, int depth, float currentWidth, int state) {
 		if (depth <= 0) return;
 		glPushMatrix();
@@ -139,16 +139,18 @@ struct Tree : public IDrawable {
 		// then recursively draw the left and right tree
 		glTranslatef(0, length, 0);
 
+		srand(state);
 		int s1 = rand(), s2 = rand();
+		float r1 = randomness(s1), r2 = randomness(s2);
 
 		glPushMatrix();
-		glRotatef(splitAngle, 0, 0, 1);
-		makeTree(length * splitSizeFactor * randomness(s1), depth - 1, currentWidth * splitSizeFactor, s1);
+		glRotatef(splitAngle * r1, 0, 0, 1);
+		makeTree(length * splitSizeFactor * r1, depth - 1, currentWidth * splitSizeFactor * r1, s1);
 		glPopMatrix();
 
 		glPushMatrix();
-		glRotatef(-splitAngle, 0, 0, 1);
-		makeTree(length * splitSizeFactor * randomness(s2), depth - 1, currentWidth * splitSizeFactor, s2);
+		glRotatef(-splitAngle * r2, 0, 0, 1);
+		makeTree(length * splitSizeFactor * r2, depth - 1, currentWidth * splitSizeFactor * r2, s2);
 		glPopMatrix();
 
 		setDefaultLineWidth();
@@ -167,13 +169,16 @@ struct TreeBehavior : public IUpdateBehavior {
 	float length;
 	float lengthDance = 0;
 	float lengthDanceFreq = 1;
+	float randomRange;
 	bool splitAngleDancing = 0;
 	bool depthDancing = 0;
 	bool lengthDancing = 0;
+	bool randomness = 1;
 	TreeBehavior(Tree* tree) : tree(tree) {
 		splitAngle = tree->splitAngle;
 		depth = tree->depth;
 		length = tree->length;
+		randomRange = tree->randomRange;
 	}
 	void update(float time, float timeDelta) {
 		if (splitAngleDancing)
@@ -182,6 +187,7 @@ struct TreeBehavior : public IUpdateBehavior {
 			tree->depth = depth + (int)roundf(depthDance * sin(depthDanceFreq * time));
 		if (lengthDancing)
 			tree->length = length + lengthDance * sin(lengthDanceFreq * time);
+		tree->randomRange = randomness ? randomRange : 0;
 	}
 	void toggleSplitAngleDance() {
 		splitAngleDancing = !splitAngleDancing;
@@ -191,6 +197,9 @@ struct TreeBehavior : public IUpdateBehavior {
 	}
 	void toggleLengthDance() {
 		lengthDancing = !lengthDancing;
+	}
+	void toggleRandomness() {
+		randomness = !randomness;
 	}
 };
 

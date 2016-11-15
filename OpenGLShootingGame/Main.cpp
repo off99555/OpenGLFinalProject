@@ -104,14 +104,20 @@ struct Tree : public IDrawable {
 	float startAngle;
 	float splitAngle = 15;
 	float splitSizeFactor = 0.9;
-	int colorCounter = 0;
 	float width = 10.0f;
+	int state; // set to random value for different state on each tree
+	Tree() {
+		state = rand();
+	}
+private:
+	int colorCounter = 0;
 	void draw() {
 		glPushMatrix();
 		glTranslatef(pos.x, pos.y, 0);
 		glRotatef(startAngle, 0, 0, 1);
-		colorCounter = 0;
-		makeTree(length, depth, width);
+		colorCounter = state % availableColors.size();
+		srand(state);
+		makeTree(length, depth, width, state);
 		glPopMatrix();
 	}
 	void setNextColor() {
@@ -119,25 +125,33 @@ struct Tree : public IDrawable {
 		glColor3f(currentColor.x, currentColor.y, currentColor.z);
 		++colorCounter %= availableColors.size();
 	}
-	void makeTree(float length, int depth, float currentWidth) {
+	float randomness(int state) { // returns a float value between 0 and 1 inclusively
+		return state % 101 / 100.0f;
+	}
+	void makeTree(float length, int depth, float currentWidth, int state) {
 		if (depth <= 0) return;
 		glPushMatrix();
 		glLineWidth(currentWidth);
 		setNextColor();
+		// draw the trunk
 		glBegin(GL_LINES);
 		glVertex2f(0, 0);
 		glVertex2f(0, length);
 		glEnd();
+		// then recursively draw the left and right tree
 		glTranslatef(0, length, 0);
+
+		int s1 = rand(), s2 = rand();
 
 		glPushMatrix();
 		glRotatef(splitAngle, 0, 0, 1);
-		makeTree(length * splitSizeFactor, depth - 1, currentWidth * splitSizeFactor);
+		float randomFactor = 0.8 + 0.4 * randomness(state);
+		makeTree(length * splitSizeFactor * randomFactor, depth - 1, currentWidth * splitSizeFactor, s1);
 		glPopMatrix();
 
 		glPushMatrix();
 		glRotatef(-splitAngle, 0, 0, 1);
-		makeTree(length * splitSizeFactor, depth - 1, currentWidth * splitSizeFactor);
+		makeTree(length * splitSizeFactor * randomFactor, depth - 1, currentWidth * splitSizeFactor, s2);
 		glPopMatrix();
 
 		setDefaultLineWidth();
@@ -552,7 +566,7 @@ void genWave(Vector2f p) {
 	mainWave.push_back(sineBehavior);
 }
 
-void genTree(Vector2f p, int length=70, int lengthDance=35, int depth = 8, int startAngle = 0,
+void genTree(Vector2f p, int length = 70, int lengthDance = 35, int depth = 8, int startAngle = 0,
 	float splitAngleDance = 24, float splitAngleDanceFreq = 0.8, float depthDanceFreq = 0.2,
 	float lengthDanceFreq = 0.3, int depthDance = 4, float splitAngle = 40, float splitSizeFactor = 0.8) {
 	Tree *tree = new Tree;
@@ -575,6 +589,7 @@ void genTree(Vector2f p, int length=70, int lengthDance=35, int depth = 8, int s
 
 }
 void initialize() {
+	srand(time(NULL));
 	glutDisplayFunc(display);
 	glutIdleFunc(update);
 	glutMouseFunc(click);
@@ -608,7 +623,6 @@ void initialize() {
 	genTriangle({ 300, 200 });
 	genTriangle({ 300, 200 });
 	genTriangle({ 300, 200 });
-	srand(time(NULL));
 	START_TIME = system_clock::now();
 	CURRENT_TIME = system_clock::now();
 }

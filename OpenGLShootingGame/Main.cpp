@@ -105,7 +105,7 @@ struct Tree : public IDrawable {
 	float splitAngle = 15;
 	float splitSizeFactor = 0.9;
 	float width = 10.0f;
-	float randomRange = 0.2; // should be between 0 and 1
+	float randomRange = 0.3; // should be between 0 and 1
 	int state; // set to random value for different state on each tree
 	Tree() {
 		state = rand();
@@ -174,7 +174,7 @@ struct TreeBehavior : public IUpdateBehavior {
 	bool splitAngleDancing = 0;
 	bool depthDancing = 0;
 	bool lengthDancing = 0;
-	bool randomness = 1;
+	bool randomness = 0;
 	TreeBehavior(Tree* tree) : tree(tree) {
 		splitAngle = tree->splitAngle;
 		depth = tree->depth;

@@ -110,21 +110,17 @@ struct Tree : public IDrawable {
 	Tree() {
 		state = rand();
 	}
-private:
-	int colorCounter = 0;
 	void draw() {
 		glPushMatrix();
 		glTranslatef(pos.x, pos.y, 0);
 		glRotatef(startAngle, 0, 0, 1);
-		colorCounter = state % availableColors.size();
 		srand(state);
 		makeTree(length, depth, width, state);
 		glPopMatrix();
 	}
-	void setNextColor() {
-		Vector3f currentColor = availableColors[colorCounter];
+	void setNextColor(int state) {
+		Vector3f currentColor = availableColors[state % availableColors.size()];
 		glColor3f(currentColor.x, currentColor.y, currentColor.z);
-		++colorCounter %= availableColors.size();
 	}
 	// returns a float value between (1-ranRange) and (1+ranRange) inclusively
 	float randomness(int state) {
@@ -134,7 +130,7 @@ private:
 		if (depth <= 0) return;
 		glPushMatrix();
 		glLineWidth(currentWidth);
-		setNextColor();
+		setNextColor(state);
 		// draw the trunk
 		glBegin(GL_LINES);
 		glVertex2f(0, 0);

@@ -142,14 +142,15 @@ struct Tree : public IDrawable {
 		srand(state);
 		int s1 = rand(), s2 = rand();
 		float r1 = randomness(s1), r2 = randomness(s2);
+		float r3 = randomness(s1), r4 = randomness(s2);
 
 		glPushMatrix();
-		glRotatef(splitAngle * r1, 0, 0, 1);
+		glRotatef(splitAngle * r3, 0, 0, 1);
 		makeTree(length * splitSizeFactor * r1, depth - 1, currentWidth * splitSizeFactor * r1, s1);
 		glPopMatrix();
 
 		glPushMatrix();
-		glRotatef(-splitAngle * r2, 0, 0, 1);
+		glRotatef(-splitAngle * r4, 0, 0, 1);
 		makeTree(length * splitSizeFactor * r2, depth - 1, currentWidth * splitSizeFactor * r2, s2);
 		glPopMatrix();
 

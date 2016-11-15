@@ -105,6 +105,7 @@ struct Tree : public IDrawable {
 	float splitAngle = 15;
 	float splitSizeFactor = 0.9;
 	float width = 10.0f;
+	float randomRange = 0.3; // should be between 0 and 1
 	int state; // set to random value for different state on each tree
 	Tree() {
 		state = rand();
@@ -125,8 +126,9 @@ private:
 		glColor3f(currentColor.x, currentColor.y, currentColor.z);
 		++colorCounter %= availableColors.size();
 	}
-	float randomness(int state) { // returns a float value between 0 and 1 inclusively
-		return state % 101 / 100.0f;
+	// returns a float value between (1-ranRange) and (1+ranRange) inclusively
+	float randomness(int state) {
+		return (1.0 - randomRange) + randomRange * 2 * (state % 101 / 100.0f);
 	}
 	void makeTree(float length, int depth, float currentWidth, int state) {
 		if (depth <= 0) return;
@@ -145,13 +147,12 @@ private:
 
 		glPushMatrix();
 		glRotatef(splitAngle, 0, 0, 1);
-		float randomFactor = 0.8 + 0.4 * randomness(state);
-		makeTree(length * splitSizeFactor * randomFactor, depth - 1, currentWidth * splitSizeFactor, s1);
+		makeTree(length * splitSizeFactor * randomness(s1), depth - 1, currentWidth * splitSizeFactor, s1);
 		glPopMatrix();
 
 		glPushMatrix();
 		glRotatef(-splitAngle, 0, 0, 1);
-		makeTree(length * splitSizeFactor * randomFactor, depth - 1, currentWidth * splitSizeFactor, s2);
+		makeTree(length * splitSizeFactor * randomness(s2), depth - 1, currentWidth * splitSizeFactor, s2);
 		glPopMatrix();
 
 		setDefaultLineWidth();

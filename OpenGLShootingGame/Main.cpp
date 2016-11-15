@@ -555,6 +555,10 @@ void mainMenu(int val) {
 		for (int i = 0; i < mainTree.size(); i++)
 			mainTree[i]->toggleLengthDance();
 	}
+	else if (val == 4) {
+		for (int i = 0; i < mainTree.size(); i++)
+			mainTree[i]->toggleRandomness();
+	}
 }
 
 void genWave(Vector2f p) {
@@ -608,6 +612,7 @@ void initialize() {
 	glutAddMenuEntry("Toggle Tree Split Angle Dance", 1);
 	glutAddMenuEntry("Toggle Tree Depth Dance", 2);
 	glutAddMenuEntry("Toggle Tree Length Dance", 3);
+	glutAddMenuEntry("Toggle Tree Symmetery", 4);
 	glutAddMenuEntry("Toggle wave direction", 0);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 	//Point *middle = new Point;

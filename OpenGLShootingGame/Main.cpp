@@ -156,9 +156,9 @@ struct TreeBehavior : public IUpdateBehavior {
 	float length;
 	float lengthDance = 0;
 	float lengthDanceFreq = 1;
-	bool splitAngleDancing = 1;
-	bool depthDancing = 1;
-	bool lengthDancing = 1;
+	bool splitAngleDancing = 0;
+	bool depthDancing = 0;
+	bool lengthDancing = 0;
 	TreeBehavior(Tree* tree) : tree(tree) {
 		splitAngle = tree->splitAngle;
 		depth = tree->depth;

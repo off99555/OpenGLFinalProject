@@ -557,8 +557,12 @@ void mainMenu(int val) {
 			mainTree[i]->toggleLengthDance();
 	}
 	else if (val == 4) {
-		for (int i = 0; i < mainTree.size(); i++)
+		for (int i = 0; i < mainTree.size(); i++) {
 			mainTree[i]->toggleRandomness();
+			mainTree[i]->tree->state = rand();
+		}
+	}
+	else if (val == 5) {
 	}
 }
 

@@ -450,6 +450,7 @@ void drawRect(int glPrimitve, float w, float h) {
 void drawPlayer(float rad, Vector2f gunSize) {
 	glPushMatrix();
 	glTranslatef(playerPosition.x, playerPosition.y, 0);
+	glColor3f(0, 56/255.0f, 101/255.0f);
 	drawCircle(GL_POLYGON, { rad, rad });
 	glRotatef(playerAngle - 90, 0, 0, 1);
 	drawRect(GL_LINE_LOOP, gunSize.x, gunSize.y);

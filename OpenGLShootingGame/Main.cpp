@@ -84,6 +84,9 @@ struct PathFollowingBehavior : IUpdateBehavior {
 	void toggleRunningState() {
 		running = !running;
 	}
+	void toggleDirection() {
+		reverse = !reverse;
+	}
 };
 
 struct SineWave : public IDrawable {
@@ -639,6 +642,10 @@ void mainMenu(int val) {
 			following[i]->toggleRunningState();
 		trackingLine->tracking = following[0]->running;
 	}
+	else if (val == 6) {
+		for (int i = 0; i < following.size(); i++)
+			following[i]->toggleDirection();
+	}
 }
 
 void genWave(Vector2f p) {
@@ -712,6 +719,7 @@ void initialize() {
 	glutAddMenuEntry("Toggle Tree Length Dance", 3);
 	glutAddMenuEntry("Toggle Tree Symmetery", 4);
 	glutAddMenuEntry("Toggle Mover Running State", 5);
+	glutAddMenuEntry("Toggle Mover Direction", 6);
 	glutAddMenuEntry("Toggle Wave Direction", 0);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 	//Point *middle = new Point;

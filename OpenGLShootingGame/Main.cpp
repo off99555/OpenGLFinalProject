@@ -258,14 +258,15 @@ duration<double> TIME; // time duration since the program is loaded
 duration<double> TIME_DELTA;
 int W = 800;
 int H = 600;
-float PLAYER_SPEED = 500.0f;
-float PLAYER_DRAG = 0.1f;
+float PLAYER_ACCELERATION = 5000.0f;
+float PLAYER_DRAG = 0.01f;
 
 vector<IUpdateBehavior*> updateBehaviors;
 vector<IDrawable*> drawables;
 vector<Vector2f> points;
 Vector2f playerPosition = { -326, -263 };
 Vector2f playerVelocity;
+Vector2f playerAcceleration;
 float playerAngle = 0;
 vector<TreeBehavior*> mainTree;
 vector<SineWaveBehavior*> mainWave;
@@ -276,7 +277,7 @@ vector<PathFollowingBehavior*> following;
 struct TrackingLine : public IDrawable, public IUpdateBehavior {
 	Vector2f pos1, pos2;
 	bool tracking = false;
-	float pullForce = 0.001f;
+	float pullForce = 0.0001f;
 	virtual void draw() override
 	{
 		if (!tracking) return;
@@ -294,7 +295,7 @@ struct TrackingLine : public IDrawable, public IUpdateBehavior {
 		// applying force to the player
 		if (!tracking) return;
 		Vector2f difference = { pos2.x - pos1.x, pos2.y - pos1.y };
-		float magnitude = length();
+		float magnitude = sqrDistance(pos1, pos2);
 		playerVelocity.x += difference.x * timeDelta * magnitude * pullForce;
 		playerVelocity.y += difference.y * timeDelta * magnitude * pullForce;
 	}
@@ -564,10 +565,12 @@ void pointTowards(Vector2f p) {
 }
 
 void beforeRedisplay() {
+	playerVelocity.x += playerAcceleration.x * timeDelta();
+	playerVelocity.y += playerAcceleration.y * timeDelta();
 	playerPosition.x += playerVelocity.x * timeDelta();
 	playerPosition.y += playerVelocity.y * timeDelta();
-	playerVelocity.x *= (1.0f - PLAYER_DRAG * timeDelta());
-	playerVelocity.y *= (1.0f - PLAYER_DRAG * timeDelta());
+	playerVelocity.x *= (1.0f - PLAYER_DRAG);
+	playerVelocity.y *= (1.0f - PLAYER_DRAG);
 	pointTowards(following[0]->mover->getPosition());
 	// prevent player from going out of the boundary
 	if (playerPosition.x < -W / 2.0) playerPosition.x = -W / 2.0;
@@ -606,35 +609,31 @@ void passiveMotion(int x, int y) {
 
 void keyboard(unsigned char c, int x, int y) {
 	if (c == 'a') {
-		playerVelocity.x = -PLAYER_SPEED;
+		playerAcceleration.x = -PLAYER_ACCELERATION;
 	}
 	else if (c == 'd') {
-		playerVelocity.x = PLAYER_SPEED;
-
+		playerAcceleration.x = PLAYER_ACCELERATION;
 	}
 	else if (c == 'w') {
-		playerVelocity.y = PLAYER_SPEED;
-
+		playerAcceleration.y = PLAYER_ACCELERATION;
 	}
 	else if (c == 's') {
-		playerVelocity.y = -PLAYER_SPEED;
+		playerAcceleration.y = -PLAYER_ACCELERATION;
 	}
 }
 
 void keyboardUp(unsigned char c, int x, int y) {
 	if (c == 'a') {
-		playerVelocity.x += PLAYER_SPEED;
+		playerAcceleration.x += PLAYER_ACCELERATION;
 	}
 	else if (c == 'd') {
-		playerVelocity.x -= PLAYER_SPEED;
-
+		playerAcceleration.x -= PLAYER_ACCELERATION;
 	}
 	else if (c == 'w') {
-		playerVelocity.y -= PLAYER_SPEED;
-
+		playerAcceleration.y -= PLAYER_ACCELERATION;
 	}
 	else if (c == 's') {
-		playerVelocity.y += PLAYER_SPEED;
+		playerAcceleration.y += PLAYER_ACCELERATION;
 	}
 }
 

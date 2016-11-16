@@ -2,7 +2,7 @@
 My OpenGLFinalProject (a dancing recursive tree and physics simulation)
 
 # Download Link
-Download The Executable Binary Here:
+Download the Executable Binary Here:
 https://github.com/off99555/OpenGLFinalProject/releases/latest
 
 # Note
@@ -12,5 +12,5 @@ game engine-liked functionality into OpenGL by reinventing the wheel.
 
 #Limitation
 I have to do everything in one file (because the grading system
-doesn't allow uploading multiple files). So, this is quite a mess code in side
-**Main.cpp**.
+doesn't allow uploading multiple files). So, the result is a pile of messed up
+code in side **Main.cpp**.

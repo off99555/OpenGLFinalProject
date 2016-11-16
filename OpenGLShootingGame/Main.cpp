@@ -732,12 +732,15 @@ void initialize() {
 	glutMouseFunc(click);
 	glutReshapeFunc(reshape);
 	glutPassiveMotionFunc(passiveMotion);
-	cout << "Move the player using WASD key" << endl;
 	glutKeyboardFunc(keyboard);
 	glutKeyboardUpFunc(keyboardUp);
 
+	cout << "=== INSTRUCTIONS ===" << endl;
+	cout << "Move the player using WASD key" << endl;
 	cout << "Right-click to open menu" << endl;
 	cout << "Left-click to spawn new random object" << endl;
+	cout << endl;
+	cout << "=== LOGS ===" << endl;
 	glutCreateMenu(mainMenu);
 	glutAddMenuEntry("Toggle Tree Split Angle Dance", 1);
 	glutAddMenuEntry("Toggle Tree Depth Dance", 2);

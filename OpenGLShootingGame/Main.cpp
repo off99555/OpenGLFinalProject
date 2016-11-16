@@ -674,7 +674,7 @@ void initialize() {
 	glutAddMenuEntry("Toggle Tree Length Dance", 3);
 	glutAddMenuEntry("Toggle Tree Symmetery", 4);
 	glutAddMenuEntry("Toggle Mover Running State", 5);
-	glutAddMenuEntry("Toggle wave direction", 0);
+	glutAddMenuEntry("Toggle Wave Direction", 0);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 	//Point *middle = new Point;
 	//middle->pos = { 0, 0 };

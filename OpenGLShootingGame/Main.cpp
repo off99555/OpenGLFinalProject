@@ -292,6 +292,7 @@ struct TrackingLine : public IDrawable, public IUpdateBehavior {
 		pos1 = playerPosition;
 		pos2 = following[0]->mover->getPosition();
 		// applying force to the player
+		if (!tracking) return;
 		Vector2f difference = { pos2.x - pos1.x, pos2.y - pos1.y };
 		float magnitude = length();
 		playerVelocity.x += difference.x * timeDelta * magnitude * pullForce;

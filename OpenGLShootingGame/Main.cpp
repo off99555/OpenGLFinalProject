@@ -261,13 +261,14 @@ int W = 800;
 int H = 600;
 float PLAYER_ACCELERATION = 5000.0f;
 float PLAYER_DRAG = 0.01f;
+float GRAVITY = 1000;
 
 vector<IUpdateBehavior*> updateBehaviors;
 vector<IDrawable*> drawables;
 vector<Vector2f> points;
 Vector2f playerPosition = { -326, -263 };
 Vector2f playerVelocity;
-Vector2f playerAcceleration;
+Vector2f playerAcceleration = { 0, -GRAVITY };
 float playerAngle = 0;
 vector<TreeBehavior*> mainTree;
 vector<SineWaveBehavior*> mainWave;
@@ -617,10 +618,10 @@ void keyboard(unsigned char c, int x, int y) {
 		playerAcceleration.x = PLAYER_ACCELERATION;
 	}
 	else if (c == 'w') {
-		playerAcceleration.y = PLAYER_ACCELERATION;
+		playerAcceleration.y = PLAYER_ACCELERATION - GRAVITY;
 	}
 	else if (c == 's') {
-		playerAcceleration.y = -PLAYER_ACCELERATION;
+		playerAcceleration.y = -PLAYER_ACCELERATION - GRAVITY;
 	}
 }
 

@@ -274,7 +274,7 @@ struct TrackingLine : public IDrawable, public IUpdateBehavior {
 	virtual void draw() override
 	{
 		if (!tracking) return;
-		glLineWidth(10);
+		glLineWidth(1000 / length());
 		glColor3f(0, 0.5, 0.5);
 		glBegin(GL_LINES);
 		glVertex2f(pos1.x, pos1.y);

@@ -736,7 +736,8 @@ void initialize() {
 	glutKeyboardFunc(keyboard);
 	glutKeyboardUpFunc(keyboardUp);
 
-	cout << "Right-click on the window to open menu" << endl;
+	cout << "Right-click to open menu" << endl;
+	cout << "Left-click to spawn new random object" << endl;
 	glutCreateMenu(mainMenu);
 	glutAddMenuEntry("Toggle Tree Split Angle Dance", 1);
 	glutAddMenuEntry("Toggle Tree Depth Dance", 2);

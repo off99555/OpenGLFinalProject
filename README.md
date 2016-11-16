@@ -13,4 +13,4 @@ game engine-liked functionality into OpenGL by reinventing the wheel.
 #Limitation
 I have to do everything in one file (because the grading system
 doesn't allow uploading multiple files). So, the result is a pile of messed up
-code in side **Main.cpp**.
+code inside **Main.cpp**.

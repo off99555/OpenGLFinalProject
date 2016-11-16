@@ -260,7 +260,7 @@ vector<IUpdateBehavior*> updateBehaviors;
 vector<IDrawable*> drawables;
 vector<Vector2f> points;
 Vector2f playerPosition = { -326, -263 };
-Vector2f playerSpeed;
+Vector2f playerVelocity;
 float playerAngle = 0;
 vector<TreeBehavior*> mainTree;
 vector<SineWaveBehavior*> mainWave;
@@ -547,8 +547,8 @@ void pointTowards(Vector2f p) {
 }
 
 void beforeRedisplay() {
-	playerPosition.x += playerSpeed.x * timeDelta();
-	playerPosition.y += playerSpeed.y * timeDelta();
+	playerPosition.x += playerVelocity.x * timeDelta();
+	playerPosition.y += playerVelocity.y * timeDelta();
 	pointTowards(following[0]->mover->getPosition());
 }
 
@@ -582,35 +582,35 @@ void passiveMotion(int x, int y) {
 
 void keyboard(unsigned char c, int x, int y) {
 	if (c == 'a') {
-		playerSpeed.x = -PLAYER_SPEED;
+		playerVelocity.x = -PLAYER_SPEED;
 	}
 	else if (c == 'd') {
-		playerSpeed.x = PLAYER_SPEED;
+		playerVelocity.x = PLAYER_SPEED;
 
 	}
 	else if (c == 'w') {
-		playerSpeed.y = PLAYER_SPEED;
+		playerVelocity.y = PLAYER_SPEED;
 
 	}
 	else if (c == 's') {
-		playerSpeed.y = -PLAYER_SPEED;
+		playerVelocity.y = -PLAYER_SPEED;
 	}
 }
 
 void keyboardUp(unsigned char c, int x, int y) {
 	if (c == 'a') {
-		playerSpeed.x += PLAYER_SPEED;
+		playerVelocity.x += PLAYER_SPEED;
 	}
 	else if (c == 'd') {
-		playerSpeed.x -= PLAYER_SPEED;
+		playerVelocity.x -= PLAYER_SPEED;
 
 	}
 	else if (c == 'w') {
-		playerSpeed.y -= PLAYER_SPEED;
+		playerVelocity.y -= PLAYER_SPEED;
 
 	}
 	else if (c == 's') {
-		playerSpeed.y += PLAYER_SPEED;
+		playerVelocity.y += PLAYER_SPEED;
 	}
 }
 

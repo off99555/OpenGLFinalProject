@@ -274,6 +274,8 @@ struct TrackingLine : public IDrawable, public IUpdateBehavior {
 	virtual void draw() override
 	{
 		if (!tracking) return;
+		glLineWidth(10);
+		glColor3f(0, 0.5, 0.5);
 		glBegin(GL_LINES);
 		glVertex2f(pos1.x, pos1.y);
 		glVertex2f(pos2.x, pos2.y);
@@ -283,6 +285,9 @@ struct TrackingLine : public IDrawable, public IUpdateBehavior {
 	{
 		pos1 = playerPosition;
 		pos2 = following[0]->mover->getPosition();
+	}
+	float length() {
+		return distance(pos1, pos2);
 	}
 };
 TrackingLine *trackingLine;

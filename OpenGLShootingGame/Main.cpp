@@ -779,7 +779,7 @@ int main(int argc, char **argv) {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(W, H);
 	glutInitWindowPosition(500, 100);
-	glutCreateWindow("Dancing Tree of Wisdom by Off");
+	glutCreateWindow("Dancing Tree of Wisdom and the Restless Mover - Off");
 	initialize();
 	glutMainLoop();
 	return 0;

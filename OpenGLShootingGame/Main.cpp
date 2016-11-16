@@ -568,6 +568,11 @@ void beforeRedisplay() {
 	playerVelocity.x *= (1.0f - PLAYER_DRAG * timeDelta());
 	playerVelocity.y *= (1.0f - PLAYER_DRAG * timeDelta());
 	pointTowards(following[0]->mover->getPosition());
+	// prevent player from going out of the boundary
+	if (playerPosition.x < -W / 2.0) playerPosition.x = -W / 2.0;
+	if (playerPosition.x > W / 2.0) playerPosition.x = W / 2.0;
+	if (playerPosition.y < -H / 2.0) playerPosition.y = -H / 2.0;
+	if (playerPosition.y > H / 2.0) playerPosition.y = H / 2.0;
 }
 
 void update() {

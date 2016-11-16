@@ -688,7 +688,7 @@ void genWave(Vector2f p) {
 	mainWave.push_back(sineBehavior);
 }
 
-void genTree(Vector2f p, int length = 70, int lengthDance = 35, int depth = 8, int startAngle = 0,
+void genTree(Vector2f p, int length = 70, int lengthDance = 35, int depth = 9, int startAngle = 0,
 	float splitAngleDance = 24, float splitAngleDanceFreq = 0.8, float depthDanceFreq = 0.2,
 	float lengthDanceFreq = 0.3, int depthDance = 4, float splitAngle = 40, float splitSizeFactor = 0.8) {
 	Tree *tree = new Tree;
@@ -755,7 +755,7 @@ void initialize() {
 	//middle->pos = { 0, 0 };
 	//drawables.push_back(middle);
 	genTree({ -5, -120 });
-	genTree({ -312, -173 }, 30, 10, 3, 10, 10, 1.5, 0.75, 0.4, 2, 25, 0.9);
+	genTree({ -312, -173 }, 30, 10, 4, 10, 10, 1.5, 0.75, 0.4, 2, 25, 0.9);
 	genTree({ 281, -232 }, 30, 10, 7, -20, 15, 2.0, 0.9, 0.8, 3, 30, 0.8);
 
 	genWave({ 0, -200 });

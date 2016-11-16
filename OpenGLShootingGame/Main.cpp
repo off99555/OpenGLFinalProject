@@ -175,18 +175,19 @@ struct Tree : public IDrawable {
 	int printed = 0;
 	void makeTree(float length, int depth, float currentWidth, int state) {
 		if (depth <= 0) return;
+		srand(state);
 		glPushMatrix();
 		glLineWidth(currentWidth);
-		setNextColor(state);
 		// draw the trunk
 		glBegin(GL_LINES);
+		setNextColor(rand());
 		glVertex2f(0, 0);
+		setNextColor(rand());
 		glVertex2f(0, length);
 		glEnd();
 		// then recursively draw the left and right tree
 		glTranslatef(0, length, 0);
 
-		srand(state);
 		int s1 = rand(), s2 = rand();
 		float r1 = randomness(s1), r2 = randomness(s2);
 		float r3 = randomness(s1), r4 = randomness(s2);

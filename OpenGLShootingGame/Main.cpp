@@ -261,6 +261,25 @@ float sinAmplitude = 3.0;
 float sinFrequency = 10 * PI;
 vector<PathFollowingBehavior*> following;
 
+struct TrackingLine : public IDrawable, public IUpdateBehavior {
+	Vector2f pos1, pos2;
+	bool tracking = false;
+	virtual void draw() override
+	{
+		if (!tracking) return;
+		glBegin(GL_LINES);
+		glVertex2f(pos1.x, pos1.y);
+		glVertex2f(pos2.x, pos2.y);
+		glEnd();
+	}
+	virtual void update(float time, float timeDelta) override
+	{
+		pos1 = playerPosition;
+		pos2 = following[0]->mover->getPosition();
+	}
+};
+TrackingLine *trackingLine;
+
 double time() {
 	return TIME.count(); // returns time since game loaded in seconds
 }
@@ -614,6 +633,7 @@ void mainMenu(int val) {
 	else if (val == 5) {
 		for (int i = 0; i < following.size(); i++)
 			following[i]->toggleRunningState();
+		trackingLine->tracking = following[0]->running;
 	}
 }
 
@@ -712,6 +732,9 @@ void initialize() {
 	for (int i = 0; i < 10; i++)
 		genMovingCircle(positions, i + 3, 9 - i, { 1 - i / 9.0f, 0, i / 9.0f }, 5 + (10 - i) * 2);
 
+	trackingLine = new TrackingLine;
+	drawables.push_back(trackingLine);
+	updateBehaviors.push_back(trackingLine);
 	START_TIME = system_clock::now();
 	CURRENT_TIME = system_clock::now();
 }

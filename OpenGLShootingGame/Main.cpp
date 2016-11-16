@@ -23,10 +23,14 @@ struct Vector3f {
 	float z;
 };
 
-float distance(Vector2f a, Vector2f b) {
+float sqrDistance(Vector2f a, Vector2f b) {
 	float diffX = a.x - b.x;
 	float diffY = a.y - b.y;
-	return sqrt(diffX * diffX + diffY * diffY);
+	return diffX * diffX + diffY * diffY;
+}
+
+float distance(Vector2f a, Vector2f b) {
+	return sqrt(sqrDistance(a, b));
 }
 
 struct IDrawable {
@@ -255,6 +259,7 @@ duration<double> TIME_DELTA;
 int W = 800;
 int H = 600;
 float PLAYER_SPEED = 500.0f;
+float PLAYER_DRAG = 0.1f;
 
 vector<IUpdateBehavior*> updateBehaviors;
 vector<IDrawable*> drawables;
@@ -271,6 +276,7 @@ vector<PathFollowingBehavior*> following;
 struct TrackingLine : public IDrawable, public IUpdateBehavior {
 	Vector2f pos1, pos2;
 	bool tracking = false;
+	float pullForce = 0.001f;
 	virtual void draw() override
 	{
 		if (!tracking) return;
@@ -285,6 +291,11 @@ struct TrackingLine : public IDrawable, public IUpdateBehavior {
 	{
 		pos1 = playerPosition;
 		pos2 = following[0]->mover->getPosition();
+		// applying force to the player
+		Vector2f difference = { pos2.x - pos1.x, pos2.y - pos1.y };
+		float magnitude = length();
+		playerVelocity.x += difference.x * timeDelta * magnitude * pullForce;
+		playerVelocity.y += difference.y * timeDelta * magnitude * pullForce;
 	}
 	float length() {
 		return distance(pos1, pos2);
@@ -554,6 +565,8 @@ void pointTowards(Vector2f p) {
 void beforeRedisplay() {
 	playerPosition.x += playerVelocity.x * timeDelta();
 	playerPosition.y += playerVelocity.y * timeDelta();
+	playerVelocity.x *= (1.0f - PLAYER_DRAG * timeDelta());
+	playerVelocity.y *= (1.0f - PLAYER_DRAG * timeDelta());
 	pointTowards(following[0]->mover->getPosition());
 }
 

@@ -740,7 +740,7 @@ void initialize() {
 	glutAddMenuEntry("Toggle Tree Split Angle Dance", 1);
 	glutAddMenuEntry("Toggle Tree Depth Dance", 2);
 	glutAddMenuEntry("Toggle Tree Length Dance", 3);
-	glutAddMenuEntry("Toggle Tree Symmetery", 4);
+	glutAddMenuEntry("Toggle Tree Symmetry/Asymmetry", 4);
 	glutAddMenuEntry("Toggle Mover Running State", 5);
 	glutAddMenuEntry("Toggle Mover Direction", 6);
 	glutAddMenuEntry("Toggle Wave Direction", 0);

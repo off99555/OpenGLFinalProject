@@ -21,6 +21,7 @@ Global
 		{48FCA350-8B91-4A87-8807-16CE2164942C}.Release|x64.Build.0 = Release|x64
 		{48FCA350-8B91-4A87-8807-16CE2164942C}.Release|x86.ActiveCfg = Release|Win32
 		{48FCA350-8B91-4A87-8807-16CE2164942C}.Release|x86.Build.0 = Release|Win32
+		{48FCA350-8B91-4A87-8807-16CE2164942C}.Release|x86.Deploy.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

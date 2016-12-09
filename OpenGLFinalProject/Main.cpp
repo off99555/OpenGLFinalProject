@@ -484,10 +484,10 @@ Vector2f screenToWorld(int x, int y) {
 	return{ sx, sy };
 }
 
-Circle* genCircle(Vector2f p) {
+Circle* genCircle(Vector2f p, float elipseScale=1.0) {
 	Circle *circle = new Circle;
 	float rad = 30 + rand() % 30;
-	circle->radius = { rad, rad };
+	circle->radius = { rad * elipseScale, rad / elipseScale };
 	circle->pos = { p.x, p.y };
 	int ran = rand() % 2;
 	if (ran)
@@ -764,7 +764,7 @@ void initialize() {
 	genWave({ 0, -260 });
 
 	for (int i = 0; i < 10; i++)
-		genCircle({ -303, 228 });
+		genCircle({ -303, 228 }, 1.0f - 0.2f + 0.4f * (rand() % 100 / 99.0f));
 
 	for (int i = 0; i < 5; i++)
 		genTriangle({ 300, 200 });
